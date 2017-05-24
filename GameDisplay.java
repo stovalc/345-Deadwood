@@ -17,20 +17,21 @@ import javax.imageio.ImageIO;
 
 public class GameDisplay extends JFrame {
 	JPanel board;
-	JPanel desc;
-	JLayeredPane background;
-    Dimension boardSize = new Dimension(1170, 882);
+	JPanel info;
+	JLayeredPane layeredPane;
+    Dimension boardSize = new Dimension(1130, 850);
     Dimension paneSize = new Dimension(1300, 950);
     
     ImageIcon[] playerImages;
 	
-	public void boardBackground() {
-		background = new JLayeredPane();
-		background.setPreferredSize(paneSize);
+	public GameDisplay() {
+		layeredPane = new JLayeredPane();
+		getContentPane().add(layeredPane);
+		layeredPane.setPreferredSize(paneSize);
 		
 		
 		board = new JPanel();
-		background.add(board, JLayeredPane.DEFAULT_LAYER);
+		layeredPane.add(board, JLayeredPane.DEFAULT_LAYER);
 		board.setLayout(new GridLayout(2, 2));
 		board.setPreferredSize(boardSize);
 		board.setBounds(0, 0, boardSize.width, boardSize.height);

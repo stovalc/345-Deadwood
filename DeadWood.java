@@ -1,10 +1,13 @@
 import java.util.*;
-public class DeadWood {
+import javax.swing.*;
+
+public class DeadWood extends JFrame {
 	private static int day;
 	private static int turn;
 	private static ArrayList<Scene> deck = new ArrayList<Scene>();
 	private static ArrayList<Scene> discard = new ArrayList<Scene>();
 	private static ArrayList<Scene> board = new ArrayList<Scene>();
+	private static GameDisplay backgroundBoard;
 	private static ArrayList<Player> playerList = new ArrayList<Player>();
 	private static ArrayList<Area> locations = new ArrayList<Area>();
 	private static Area start;
@@ -13,7 +16,7 @@ public class DeadWood {
 	
 	//Controls basic game flow
 	public static void main(String[] args)
-	{
+	{		
 		Scanner scan = new Scanner(System.in);
 		if(args.length != 0)
 		{
@@ -24,8 +27,15 @@ public class DeadWood {
 			System.out.println("Please enter the number of players (must be 2-8)");
 			playerNum = scan.nextInt();
 		}
+		backgroundBoard = new GameDisplay();
+		backgroundBoard.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		backgroundBoard.pack();
+		backgroundBoard.setLocationRelativeTo(null);
+		backgroundBoard.setResizable(true);
+		backgroundBoard.setVisible(true);
 		boolean game = true;
 		startGame();
+		
 		while(game)
 		{
 			day = 0;
@@ -277,7 +287,7 @@ public class DeadWood {
 		Role mCan = new Role("Marshal Canfield", "Hold fast!", 3, false);
 		Role oneEye = new Role("One-Eyed Man", "Balderdash!", 4, false);
 		
-		Scene evilHat = new Scene("Evil Wears a Hat", 7, "Calhoun is separated from the group during a white-knuckle chase near Desperation Bluff", 4);
+		Scene evilHat = new Scene("Evil Wears a Hat", 7, "Calhoun is separated from the group during a white-knuckle chase near Desperation Bluff", 4, "01.png");
 		evilHat.addRoles(oneEye);
 		evilHat.addRoles(mCan);
 		evilHat.addRoles(dPriest);
@@ -288,7 +298,7 @@ public class DeadWood {
 		Role pImh = new Role("Pharaoh Imhotep", "Attack, soldiers!", 4, false);
 		Role aMartha = new Role("Aunt Martha", "You got nothin'!", 6, false);
 		
-		Scene sqDeal = new Scene("Square Deal City", 14, "Douglas and Katherine confront Aunt Martha about her missing pies. Devin sulks quietly in a side room.", 6);
+		Scene sqDeal = new Scene("Square Deal City", 14, "Douglas and Katherine confront Aunt Martha about her missing pies. Devin sulks quietly in a side room.", 6, "06.png");
 		sqDeal.addRoles(aMartha);
 		sqDeal.addRoles(pImh);
 		sqDeal.addRoles(sqBoy);
@@ -299,7 +309,7 @@ public class DeadWood {
 		Role banker = new Role("Banker", "Trust me", 2, false);
 		Role talkingMule = new Role("Talking Mule", "Nice work, Johnny!", 5, false);
 		
-		Scene lawOldWest = new Scene("Law and the Old West", 20, "Charlie " + apost + "Three Guns" + apost + " Henderson cooperates with Johnny Law and reluctantly enters the witless protection program.", 3);
+		Scene lawOldWest = new Scene("Law and the Old West", 20, "Charlie " + apost + "Three Guns" + apost + " Henderson cooperates with Johnny Law and reluctantly enters the witless protection program.", 3, "02.png");
 		lawOldWest.addRoles(talkingMule);
 		lawOldWest.addRoles(banker);
 		lawOldWest.addRoles(rugMerchant);
@@ -308,7 +318,7 @@ public class DeadWood {
 		Role theDuck = new Role("The Duck", "Waaaak!", 4, false);
 		Role hisBrother = new Role("His Brother", "Waaaaaaaak!", 6, false);
 		
-		Scene davyCrockett31 = new Scene("Davy Crockett: A Drunkard’s Tale", 31, "Robert enlists the aid of several farm animals in order to ascertain the efficacy of his new hangover remedy", 4);
+		Scene davyCrockett31 = new Scene("Davy Crockett: A Drunkard’s Tale", 31, "Robert enlists the aid of several farm animals in order to ascertain the efficacy of his new hangover remedy", 4, "07.png");
 		davyCrockett31.addRoles(hisBrother);
 		davyCrockett31.addRoles(theDuck);
 		deck.add(davyCrockett31);
@@ -316,7 +326,7 @@ public class DeadWood {
 		Role Auctioneer = new Role("Auctioneer", "Going once!", 5, false);
 		Role generalCuster = new Role("General Custer", "Go West!", 6, false);
 		
-		Scene johnSkywater22 = new Scene("The Life and Times of John Skywater", 22, "Disheartened by his lack of business acumen and his poor choice of investment partners, John Skywater sets off into the Cree Nation to convince them to kidnap his wife.", 5);
+		Scene johnSkywater22 = new Scene("The Life and Times of John Skywater", 22, "Disheartened by his lack of business acumen and his poor choice of investment partners, John Skywater sets off into the Cree Nation to convince them to kidnap his wife.", 5, "03.png");
 		johnSkywater22.addRoles(generalCuster);
 		johnSkywater22.addRoles(Auctioneer);
 		deck.add(johnSkywater22);
@@ -325,7 +335,7 @@ public class DeadWood {
 		Role squintingMiner = new Role("Squinting Miner", "Sure we can!", 4, false);
 		Role poltergeist = new Role("Poltergeist", "Wooooo!", 5, false);
 		
-		Scene wayWestRun = new Scene("The Way the West Was Run", 34, "Jose explains patiently, but with thinly veiled contempt, the intricacies of Arizona bureaucracy, as though speaking to a simple and distracted child.", 4);
+		Scene wayWestRun = new Scene("The Way the West Was Run", 34, "Jose explains patiently, but with thinly veiled contempt, the intricacies of Arizona bureaucracy, as though speaking to a simple and distracted child.", 4, "08.png");
 		wayWestRun.addRoles(poltergeist);
 		wayWestRun.addRoles(squintingMiner);
 		wayWestRun.addRoles(townDrunk);
@@ -335,7 +345,7 @@ public class DeadWood {
 		Role librarian = new Role("Librarian", "Shhhhh!", 4, false);
 		Role manWithHay = new Role("Man With Hay", "Hey!", 6, false);
 		
-		Scene myYearsOnThePrarie = new Scene("My Years on the Prarie", 32, "Virgil and Stacy set out at midnight to track down the stray cows, unaware that they are being pursued by inch-high aliens from outer space.", 5);
+		Scene myYearsOnThePrarie = new Scene("My Years on the Prarie", 32, "Virgil and Stacy set out at midnight to track down the stray cows, unaware that they are being pursued by inch-high aliens from outer space.", 5, "04.png");
 		myYearsOnThePrarie.addRoles(manWithHay);
 		myYearsOnThePrarie.addRoles(librarian);
 		myYearsOnThePrarie.addRoles(drunk);
@@ -345,7 +355,7 @@ public class DeadWood {
 		Role womanWithBoard = new Role("Woman with Board", "Nonsense, Frank!", 3, false);
 		Role manOnFire = new Role("Man on Fire", "It burns!", 5, false);
 		
-		Scene downInTheValley = new Scene("Down in the Valley", 24, "A tripped waiter is the spark igniting a brawl of cataclysmic proportions. Walter is injured in the neck.", 3);
+		Scene downInTheValley = new Scene("Down in the Valley", 24, "A tripped waiter is the spark igniting a brawl of cataclysmic proportions. Walter is injured in the neck.", 3, "09.png");
 		downInTheValley.addRoles(manOnFire);
 		downInTheValley.addRoles(womanWithBoard);
 		downInTheValley.addRoles(angryBarber);
@@ -355,7 +365,7 @@ public class DeadWood {
 		Role drunkFarmer = new Role("Drunk Farmer", " Git outta me barn!", 3, false);
 		Role meekLittleSarah = new Role("Meek Little Sarah", "He's so cute!", 5, false);
 		
-		Scene buffaloBill = new Scene("Buffalo Bill: The Lost Years", 12, "Buffalo Bill’s companion Marty disappears in a freak electrical storm. Bill enlists the aid of the Sidekick Friends Network.", 4);
+		Scene buffaloBill = new Scene("Buffalo Bill: The Lost Years", 12, "Buffalo Bill’s companion Marty disappears in a freak electrical storm. Bill enlists the aid of the Sidekick Friends Network.", 4, "05.png");
 		buffaloBill.addRoles(meekLittleSarah);
 		buffaloBill.addRoles(drunkFarmer);
 		buffaloBill.addRoles(holleringBoy);
@@ -365,7 +375,7 @@ public class DeadWood {
 		Role manWithPig = new Role("Man With Pig", "Tally-Hooo!", 2, false);
 		Role shooter = new Role("Shooter", "Wehre's my britches", 4, false);
 		
-		Scene olShooter = new Scene("Ol' Shooter and Little Doll", 14, "Shooter discovers that he has been proceeding for days with no trousers. This causes him no small embarrassment as he searches for them with Little Doll.", 4);
+		Scene olShooter = new Scene("Ol' Shooter and Little Doll", 14, "Shooter discovers that he has been proceeding for days with no trousers. This causes him no small embarrassment as he searches for them with Little Doll.", 4, "10.png");
 		olShooter.addRoles(shooter);
 		olShooter.addRoles(manWithPig);
 		olShooter.addRoles(sleepingMan);
@@ -375,7 +385,7 @@ public class DeadWood {
 		Role manReadingPaper = new Role("Man Reading Paper", "Ouchie!", 4, false);
 		Role fatPete = new Role("Fat Pete", "Nice kick, boss!", 5, false);
 		
-		Scene robbersOfTrains = new Scene("The Robbers of Trains", 19, "Coogan confronts the toughest thug in his gang, Big Jake, in an abbreviated knife fight. Coogan settles the dispute with fearless guile and a kick in the family jewels.", 4);
+		Scene robbersOfTrains = new Scene("The Robbers of Trains", 19, "Coogan confronts the toughest thug in his gang, Big Jake, in an abbreviated knife fight. Coogan settles the dispute with fearless guile and a kick in the family jewels.", 4, "11.png");
 		robbersOfTrains.addRoles(fatPete);
 		robbersOfTrains.addRoles(manReadingPaper);
 		robbersOfTrains.addRoles(buster);
@@ -385,7 +395,7 @@ public class DeadWood {
 		Role shotInLeg = new Role("Shot in Leg", "Ooh, lordy!", 4, false);
 		Role leapsIntoCake = new Role("Leaps into Cake", "Dangit, Jesse!", 5, false);
 		
-		Scene jesseJames8 = new Scene("Jesse James: Man of Action", 8, "Jesse’s brothers Jed and Henry throw him a surprise birthday party. Jesse’s nerves get the better of him when the birthday cake explodes.", 5);
+		Scene jesseJames8 = new Scene("Jesse James: Man of Action", 8, "Jesse’s brothers Jed and Henry throw him a surprise birthday party. Jesse’s nerves get the better of him when the birthday cake explodes.", 5, "16.png");
 		jesseJames8.addRoles(leapsIntoCake);
 		jesseJames8.addRoles(shotInLeg);
 		jesseJames8.addRoles(shotInBack);
@@ -393,7 +403,7 @@ public class DeadWood {
 		
 		Role martin = new Role("Martin", "Have you tried soy cheese?", 6, false);
 		
-		Scene beyondThePail = new Scene("Beyond the Pail: Life without Lactose", 12, "Henry discovers for the first time that his ability to digest cream has disappeared along with his hair. Other cowboys attempt to console him.", 2);
+		Scene beyondThePail = new Scene("Beyond the Pail: Life without Lactose", 12, "Henry discovers for the first time that his ability to digest cream has disappeared along with his hair. Other cowboys attempt to console him.", 2, "12.png");
 		beyondThePail.addRoles(martin);
 		deck.add(beyondThePail);
 		
@@ -401,7 +411,7 @@ public class DeadWood {
 		Role manInTurban = new Role("Man in Turban", "My Stars!", 3, false);
 		Role fallsOnHoe = new Role("Falls on Hoe", "Ow!", 4, false);
 		
-		Scene disasterAtFlyingJ = new Scene("Disaster at Flying J", 6, "After the mine explosion, the traveling circus takes time out to get drunk and start a fight.", 5);
+		Scene disasterAtFlyingJ = new Scene("Disaster at Flying J", 6, "After the mine explosion, the traveling circus takes time out to get drunk and start a fight.", 5, "17.png");
 		disasterAtFlyingJ.addRoles(fallsOnHoe);	
 		disasterAtFlyingJ.addRoles(manInTurban);
 		disasterAtFlyingJ.addRoles(pianoPlayer);
@@ -410,7 +420,7 @@ public class DeadWood {
 		Role preacher = new Role("Preacher", "My Word!", 3, false);
 		Role amusedWitness = new Role("Amused Witness", "Tee hee hee!", 6, false);
 		
-		Scene aManCalledCow = new Scene("A Man Called \"Cow\"", 16, "Nothing will settle the debates among the skeptical locals, short of a demonstration of Hector’s special talents.", 3);
+		Scene aManCalledCow = new Scene("A Man Called \"Cow\"", 16, "Nothing will settle the debates among the skeptical locals, short of a demonstration of Hector’s special talents.", 3, "13.png");
 		aManCalledCow.addRoles(amusedWitness);
 		aManCalledCow.addRoles(preacher);
 		deck.add(aManCalledCow);
@@ -419,7 +429,7 @@ public class DeadWood {
 		Role laughingWoman = new Role("Laughing Woman", "Tis to laugh!", 3, false);
 		Role manWithWhistle = new Role("Man with Whistle", "Tweeeet!", 4, false);
 		
-		Scene shakespeareInLubbock = new Scene("Shakespeare in Lubbock", 23, "William decides that it is time to be movin’ on. Julia convinces him to stick around just long enough to get into big trouble", 3);
+		Scene shakespeareInLubbock = new Scene("Shakespeare in Lubbock", 23, "William decides that it is time to be movin’ on. Julia convinces him to stick around just long enough to get into big trouble", 3, "18.png");
 		shakespeareInLubbock.addRoles(manWithWhistle);
 		shakespeareInLubbock.addRoles(laughingWoman);
 		shakespeareInLubbock.addRoles(fallsFromTree);
@@ -428,7 +438,7 @@ public class DeadWood {
 		Role curiousGirl = new Role("Curios Girl", "Are you sure?", 3, false);
 		Role ghostOfPlato = new Role("Ghost of Plato", "It happened to me!", 4, false);
 		
-		Scene taffyCommercial = new Scene("Taffy Commercial", 2, "Jackson encourages the children to eat only taffy, because gum can kill them stone dead.", 2);
+		Scene taffyCommercial = new Scene("Taffy Commercial", 2, "Jackson encourages the children to eat only taffy, because gum can kill them stone dead.", 2, "14.png");
 		taffyCommercial.addRoles(ghostOfPlato);
 		taffyCommercial.addRoles(curiousGirl);
 		deck.add(taffyCommercial);
@@ -436,7 +446,7 @@ public class DeadWood {
 		Role exConvict = new Role("Ex-Convict", "Never again!", 4, false);
 		Role manWithOnions = new Role("Man with Onions", "Fresh Onions!", 6, false);
 		
-		Scene goWestYou = new Scene("Go West, You!", 30, "Susan and Peter encounter some of the perils of the Badlands: rutted mud roads, torrential rain storms, and a bad case of \"grumble tummy.\"", 3);
+		Scene goWestYou = new Scene("Go West, You!", 30, "Susan and Peter encounter some of the perils of the Badlands: rutted mud roads, torrential rain storms, and a bad case of \"grumble tummy.\"", 3, "19.png");
 		goWestYou.addRoles(manWithOnions);
 		goWestYou.addRoles(exConvict);
 		deck.add(goWestYou);
@@ -444,7 +454,7 @@ public class DeadWood {
 		Role suprisedBison = new Role("Suprised Bison", "Mmrrrrrph!", 2, false);
 		Role manWithHorn = new Role("Man with Horn", "Ta daaaa!", 4, false);
 		
-		Scene gumCommercial = new Scene("Gum Commercial", 3, "Inspector Pete speaks to a riveted audience about the many hidden dangers of taffy, not the least of which is that taffy can kill you stone dead.", 2);
+		Scene gumCommercial = new Scene("Gum Commercial", 3, "Inspector Pete speaks to a riveted audience about the many hidden dangers of taffy, not the least of which is that taffy can kill you stone dead.", 2, "15.png");
 		gumCommercial.addRoles(manWithHorn);
 		gumCommercial.addRoles(suprisedBison);
 		deck.add(gumCommercial);
@@ -453,7 +463,7 @@ public class DeadWood {
 		Role womanWithBeer = new Role("Woman with Beer", "Howdy, stranger!", 5, false);
 		Role marcie = new Role("Marcie", "Welcome home!", 6, false);
 		
-		Scene johnSkywater = new Scene("The Life and Times of Skywater", 15, "John discovers his long-lost sister Marcie, and instructs her in the ways of gunfighting and whiskey distillation.", 5);
+		Scene johnSkywater = new Scene("The Life and Times of Skywater", 15, "John discovers his long-lost sister Marcie, and instructs her in the ways of gunfighting and whiskey distillation.", 5, "20.png");
 		johnSkywater.addRoles(marcie);
 		johnSkywater.addRoles(womanWithBeer);
 		johnSkywater.addRoles(staggeringMan);
@@ -463,7 +473,7 @@ public class DeadWood {
 		Role singingDeadMan = new Role("Singing Dead Man", "Yeah!", 5, false);
 		Role apothecary = new Role("Apothecary", "Such drugs I have.", 6, false);
 		
-		Scene gunTheMusical = new Scene("Gun! The Musical", 25, "A song and dance extravaganza, \"Hunka Hunka Burnin’ Lead.\"", 6);
+		Scene gunTheMusical = new Scene("Gun! The Musical", 25, "A song and dance extravaganza, \"Hunka Hunka Burnin’ Lead.\"", 6, "21.png");
 		gunTheMusical.addRoles(apothecary);
 		gunTheMusical.addRoles(singingDeadMan);
 		gunTheMusical.addRoles(looksLikeElvis);
@@ -472,7 +482,7 @@ public class DeadWood {
 		Role flusteredMan = new Role("Flustered Man", "Well, I never!", 1, false);
 		Role spaceMonkey = new Role("Space Monkey", "Ook!", 2, false);
 		Role cowbotDan = new Role("Cowbot Dan", "Bzzzzzt!", 5, false);
-		Scene oneFalseStepForMankind = new Scene("One False Step for Mankind", 21, "After a dozen failed attempts, one rocket carries Horatio and his six children to the Moon, where they enjoy a picnic and a spirited game of badminton.", 6);
+		Scene oneFalseStepForMankind = new Scene("One False Step for Mankind", 21, "After a dozen failed attempts, one rocket carries Horatio and his six children to the Moon, where they enjoy a picnic and a spirited game of badminton.", 6, "26.png");
 		oneFalseStepForMankind.addRoles(cowbotDan);
 		oneFalseStepForMankind.addRoles(spaceMonkey);
 		oneFalseStepForMankind.addRoles(flusteredMan);
@@ -482,7 +492,7 @@ public class DeadWood {
 		Role mephistopheles = new Role("Mephistopheles", "Be not afraid!", 4, false);
 		Role breaksWindow = new Role("Breaks a Window", "Oops!", 5, false);
 		
-		Scene humorAtTheExpenseOfOthers = new Scene("Humor at the Expense of Others", 21, "After a dozen failed attempts, one rocket carries Horatio and his six children to the Moon, where they enjoy a picnic and a spirited game of badminton.", 6);
+		Scene humorAtTheExpenseOfOthers = new Scene("Humor at the Expense of Others", 21, "After a dozen failed attempts, one rocket carries Horatio and his six children to the Moon, where they enjoy a picnic and a spirited game of badminton.", 6, "22.png");
 		humorAtTheExpenseOfOthers.addRoles(breaksWindow);
 		humorAtTheExpenseOfOthers.addRoles(mephistopheles);
 		humorAtTheExpenseOfOthers.addRoles(jailer);
@@ -492,7 +502,7 @@ public class DeadWood {
 		Role ecstaticHousewife = new Role("Ecstatic Housewife", "This is fine!", 3, false);
 		Role isaac = new Role("Isaac", "The mail!", 5, false);
 		
-		Scene thirteenTheHardWay = new Scene("Thirteen the Hard Way", 15, "After some delay, the Pony Express arrives. Isaac, Gwen, Francis, Terry, Conrad, Brooke, Jerry, Howard, MacNeill, Jones, Spike, Cornwall and Crawford are all there.", 5);
+		Scene thirteenTheHardWay = new Scene("Thirteen the Hard Way", 15, "After some delay, the Pony Express arrives. Isaac, Gwen, Francis, Terry, Conrad, Brooke, Jerry, Howard, MacNeill, Jones, Spike, Cornwall and Crawford are all there.", 5, "27.png");
 		thirteenTheHardWay.addRoles(isaac);
 		thirteenTheHardWay.addRoles(ecstaticHousewife);
 		thirteenTheHardWay.addRoles(manInPoncho);
@@ -500,7 +510,7 @@ public class DeadWood {
 		
 		Role filmCritic = new Role("Film Critic", "Implausible", 5, false);
 		Role hoboWithBat = new Role("Hobo with Bat", "Nice house!", 6, false);
-		Scene theSearchForMaggieWhite = new Scene("The Search for Maggie White", 12, "Alone in the wilderness, Maggie makes the best of her situation. In what seems like no time at all, she constructs a sturdy two-story house from branches and mud.", 6);
+		Scene theSearchForMaggieWhite = new Scene("The Search for Maggie White", 12, "Alone in the wilderness, Maggie makes the best of her situation. In what seems like no time at all, she constructs a sturdy two-story house from branches and mud.", 6, "23.png");
 		theSearchForMaggieWhite.addRoles(hoboWithBat);
 		theSearchForMaggieWhite.addRoles(filmCritic);
 		deck.add(theSearchForMaggieWhite);
@@ -509,7 +519,7 @@ public class DeadWood {
 		Role stClementOfAlexandria = new Role("St. Clement of Alexandria", "Peace be with you, child!", 3, false);
 		Role josie = new Role("Josie", "Yikes!", 4, false);
 		
-		Scene howTheyGetMilk = new Scene("How They Get Milk", 2, "Josie asks the Milkman how they get milk. After a thoughtful pause, he begins. \"Not like you’d expect!\"", 4);
+		Scene howTheyGetMilk = new Scene("How They Get Milk", 2, "Josie asks the Milkman how they get milk. After a thoughtful pause, he begins. \"Not like you’d expect!\"", 4, "28.png");
 		howTheyGetMilk.addRoles(josie);
 		howTheyGetMilk.addRoles(stClementOfAlexandria);
 		howTheyGetMilk.addRoles(cow);
@@ -518,7 +528,7 @@ public class DeadWood {
 		Role bewhiskerdCowpoke = new Role("Bewhisker'd Cowpoke", "Oh, sweet Lord!", 3, false);
 		Role dog = new Role("Dog", "Wurf!", 5, false);
 		
-		Scene picanteSauceCommercial = new Scene("Picante Sauce Commercial", 1, "A dozen grizzled cowboys surround a fire. Suddenly, they exclaim, " + apost + "That’s not mayonnaise!" + apost, 2);
+		Scene picanteSauceCommercial = new Scene("Picante Sauce Commercial", 1, "A dozen grizzled cowboys surround a fire. Suddenly, they exclaim, " + apost + "That’s not mayonnaise!" + apost, 2, "24.png");
 		picanteSauceCommercial.addRoles(dog);
 		picanteSauceCommercial.addRoles(bewhiskerdCowpoke);
 		deck.add(picanteSauceCommercial);
@@ -527,7 +537,7 @@ public class DeadWood {
 		Role leprechaun = new Role("Lerpechaun", "Begorrah!", 3, false);
 		Role startledOx = new Role("Startled Ox", "Mrr?", 5, false);
 		
-		Scene myYearsOnThePrarie27 = new Scene("My years on the Prarie", 27, "Louise takes instruction from Henry, the neighbor boy, in an absurdly suggestive explanation of how to plow a field.", 5);
+		Scene myYearsOnThePrarie27 = new Scene("My years on the Prarie", 27, "Louise takes instruction from Henry, the neighbor boy, in an absurdly suggestive explanation of how to plow a field.", 5, "29.png");
 		myYearsOnThePrarie27.addRoles(startledOx);
 		myYearsOnThePrarie27.addRoles(leprechaun);
 		myYearsOnThePrarie27.addRoles(willard);
@@ -537,7 +547,7 @@ public class DeadWood {
 		Role leapsOutOfCake = new Role("Leaps out of Cake", "Oh, for Pete's sake!", 4, false);
 		Role shotThreeTimes = new Role("Shot Three Times", "Ow! Ow! Ow!", 6, false);
 		
-		Scene jesseJames14 = new Scene("Jesse James: Man of Action", 14, "A hail of gunfire results when Jesse’s friend Barton marries Jesse’s childhood sweetheart.", 5);
+		Scene jesseJames14 = new Scene("Jesse James: Man of Action", 14, "A hail of gunfire results when Jesse’s friend Barton marries Jesse’s childhood sweetheart.", 5, "25.png");
 		jesseJames14.addRoles(shotThreeTimes);
 		jesseJames14.addRoles(leapsOutOfCake);
 		jesseJames14.addRoles(shotInHead);
@@ -547,7 +557,7 @@ public class DeadWood {
 		Role handsOfGod = new Role("Hands of God", "!", 3, false);
 		Role jackKemp = new Role("Jack Kemp", "America!", 4, false);
 		
-		Scene davyCrockett12 = new Scene("Davy Crockett: A Drunkards Tale", 12, "In an absurd dream sequence, Crockett recalls an episode of fear and chaos in which his childhood friend Timmy was trapped at the bottom of a well.", 4);
+		Scene davyCrockett12 = new Scene("Davy Crockett: A Drunkards Tale", 12, "In an absurd dream sequence, Crockett recalls an episode of fear and chaos in which his childhood friend Timmy was trapped at the bottom of a well.", 4, "30.png");
 		davyCrockett12.addRoles(jackKemp);
 		davyCrockett12.addRoles(handsOfGod);
 		davyCrockett12.addRoles(voiceOfGod);
@@ -558,8 +568,7 @@ public class DeadWood {
 		Role expHorse = new Role("Exploding Horse", "Boom!", 4, false);
 		Role Jack = new Role("Jack", "Here we go again!", 6, false);
 		
-		Scene cOtherSt = new Scene("Custer's Other Stands", 40, "General George Armstrong Custer clinches another victory at the battle of Little Sands. "
-				+ "His trusty steed Cairo is not so lucky.", 5);
+		Scene cOtherSt = new Scene("Custer's Other Stands", 40, "General George Armstrong Custer clinches another victory at the battle of Little Sands. His trusty steed Cairo is not so lucky.", 5, "40.png");
 		cOtherSt.addRoles(Jack);
 		cOtherSt.addRoles(expHorse);
 		cOtherSt.addRoles(farm);
@@ -569,7 +578,7 @@ public class DeadWood {
 		Role fClerk = new Role("File Clerk", "My stapler!", 4, false);
 		Role cLou = new Role("Cindy Lou", "Dear Lord!", 5, false);
 		
-		Scene grinchTex = new Scene("How the Grinch Stole Texas", 9, "The doe-eyed citizens of El Paso gather together around a warm fire and pray for the safety of those poor souls in Oklahoma. It almost works.", 5);
+		Scene grinchTex = new Scene("How the Grinch Stole Texas", 9, "The doe-eyed citizens of El Paso gather together around a warm fire and pray for the safety of those poor souls in Oklahoma. It almost works.", 5, "35.png");
 		grinchTex.addRoles(cLou);
 		grinchTex.addRoles(fClerk);
 		grinchTex.addRoles(dect);
@@ -578,7 +587,7 @@ public class DeadWood {
 		Role fratPledge = new Role("Fraternity Pledge", "Beer me!", 2, false);
 		Role manSword = new Role("Man with Sword", "None shall pass!", 6, false);
 		
-		Scene breakPonies = new Scene("Breakin’ in Trick Ponies", 19, "Uncle Stewart reveals what to do when all else fails.", 3);
+		Scene breakPonies = new Scene("Breakin’ in Trick Ponies", 19, "Uncle Stewart reveals what to do when all else fails.", 3, "39.png");
 		breakPonies.addRoles(manSword);
 		breakPonies.addRoles(fratPledge);
 		
@@ -586,7 +595,7 @@ public class DeadWood {
 		Role cheeseVend = new Role("Cheese Vendor", "Opa!", 4, false);
 		Role hitTable = new Role("Hit with Table", "Ow! A table?", 5, false);
 		
-		Scene trialPion = new Scene("Trials of the First Pioneers", 5, "A fire breaks out in the town livery. Before long, the surrounding buildings are engulfed in flame. The world falls into chaos.", 4);
+		Scene trialPion = new Scene("Trials of the First Pioneers", 5, "A fire breaks out in the town livery. Before long, the surrounding buildings are engulfed in flame. The world falls into chaos.", 4, "34.png");
 		trialPion.addRoles(hitTable);
 		trialPion.addRoles(cheeseVend);
 		trialPion.addRoles(burnMan);
@@ -596,7 +605,7 @@ public class DeadWood {
 		Role postWork = new Role("Postal Worker", "It's about time!", 5, false);
 		Role aHorse = new Role("A Horse", "Yes Sir!", 6, false);
 		
-		Scene howMilk = new Scene("How They Get Milk", 8, "Josie is thoroughly off milk at this point. The Milkman shows her one more way that she might not have heard of before.", 4);
+		Scene howMilk = new Scene("How They Get Milk", 8, "Josie is thoroughly off milk at this point. The Milkman shows her one more way that she might not have heard of before.", 4, "38.png");
 		howMilk.addRoles(aHorse);
 		howMilk.addRoles(postWork);
 		howMilk.addRoles(mark);
@@ -606,7 +615,7 @@ public class DeadWood {
 		Role witchDoc = new Role("Witch Doctor", "Oogie Boogie!", 5, false);
 		Role voiceReason = new Role("Voice of Reason", "Come on, now!", 6, false);
 		
-		Scene swingWide = new Scene("Swing 'em Wide", 35, "Hector makes a surprising discovery behind the Chinese grocery store.", 6);
+		Scene swingWide = new Scene("Swing 'em Wide", 35, "Hector makes a surprising discovery behind the Chinese grocery store.", 6, "33.png");
 		swingWide.addRoles(voiceReason);
 		swingWide.addRoles(witchDoc);
 		swingWide.addRoles(libNun);
@@ -616,7 +625,7 @@ public class DeadWood {
 		Role dejWife = new Role("Dejected Housewife", "Its time had come.", 4, false);
 		Role manBox = new Role("Man with Box", "Progres!", 5, false);
 		
-		Scene thirtWay = new Scene("Thirteen the Hard Way", 17, "After operating for only six minutes, the Pony Express disbands and gives way to the international Telegraph and Railroad systems. Little boys cry.", 5);
+		Scene thirtWay = new Scene("Thirteen the Hard Way", 17, "After operating for only six minutes, the Pony Express disbands and gives way to the international Telegraph and Railroad systems. Little boys cry.", 5, "37.png");
 		thirtWay.addRoles(manBox);
 		thirtWay.addRoles(dejWife);
 		thirtWay.addRoles(veryWet);
@@ -626,7 +635,7 @@ public class DeadWood {
 		Role soberPhys = new Role("Sober Physician", "Raise!", 3, false);
 		Role manFloor = new Role("Man on Floor", "Fold!", 5, false);
 		
-		Scene swingEm = new Scene("Swing 'em Wide", 19, "Black Jack invites Dixon and The Captain to a late-night poker game. Little do they know that Gertrude and Isabella await them at the table.", 6);
+		Scene swingEm = new Scene("Swing 'em Wide", 19, "Black Jack invites Dixon and The Captain to a late-night poker game. Little do they know that Gertrude and Isabella await them at the table.", 6, "32.png");
 		swingEm.addRoles(manFloor);
 		swingEm.addRoles(soberPhys);
 		swingEm.addRoles(thriftMike);
@@ -636,7 +645,7 @@ public class DeadWood {
 		Role Svet = new Role("Svetlana", "Says who?", 2, false);
 		Role accVictim = new Role("Accidental Victim", "Ow! My spine!", 5, false);
 		
-		Scene manSubstance = new Scene("J. Robert Lucky, Man of Substance", 13, "Horace and Mathilde discover that the mysterious orange powder filling Doctor Lucky’s air vents is neither Agent Orange nor weaponized Tang, but a rare form of cheese mold.", 4);
+		Scene manSubstance = new Scene("J. Robert Lucky, Man of Substance", 13, "Horace and Mathilde discover that the mysterious orange powder filling Doctor Lucky’s air vents is neither Agent Orange nor weaponized Tang, but a rare form of cheese mold.", 4, "36.png");
 		manSubstance.addRoles(accVictim);
 		manSubstance.addRoles(Svet);
 		manSubstance.addRoles(manRope);
@@ -645,7 +654,7 @@ public class DeadWood {
 		Role Opice = new Role("Opice (Monkey)", "Ukk! (Ook)!", 5, false);
 		Role manGun = new Role("Man with Gun", "Hold it right there!", 6, false);
 		
-		Scene Czechs = new Scene("Czechs in the Sonora", 25, "Bob reverts to his ancestral ways in a short fight over a disembodied hand", 4);
+		Scene Czechs = new Scene("Czechs in the Sonora", 25, "Bob reverts to his ancestral ways in a short fight over a disembodied hand", 4, "31.png");
 		Czechs.addRoles(manGun);
 		Czechs.addRoles(Opice);
 		deck.add(Czechs);
