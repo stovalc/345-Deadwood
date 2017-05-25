@@ -2,7 +2,7 @@ import java.util.*;
 import javax.swing.*;
 
 public class DeadWood extends JFrame {
-	private static int day;
+	public static int day;
 	private static int turn;
 	private static ArrayList<Scene> deck = new ArrayList<Scene>();
 	private static ArrayList<Scene> discard = new ArrayList<Scene>();
@@ -12,21 +12,23 @@ public class DeadWood extends JFrame {
 	private static ArrayList<Area> locations = new ArrayList<Area>();
 	private static Area start;
 	private static int maxDay = 4;
-	private static int playerNum;
+	public static int playerNum;
+	public static int numPlayers;
 	
 	//Controls basic game flow
 	public static void main(String[] args)
 	{		
-		Scanner scan = new Scanner(System.in);
-		if(args.length != 0)
-		{
-			playerNum = Integer.parseInt(args[0]);
-		}
-		else
-		{
-			System.out.println("Please enter the number of players (must be 2-8)");
-			playerNum = scan.nextInt();
-		}
+		numPlayers = GameDisplay.getNumOfPlayers();
+//		Scanner scan = new Scanner(System.in);
+//		if(args.length != 0)
+//		{
+//			playerNum = Integer.parseInt(args[0]);
+//		}
+//		else
+//		{
+//			System.out.println("Please enter the number of players (must be 2-8)");
+//			playerNum = scan.nextInt();
+//		}
 		
 		backgroundBoard = new GameDisplay();
 		backgroundBoard.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -34,6 +36,8 @@ public class DeadWood extends JFrame {
 		backgroundBoard.setLocationRelativeTo(null);
 		backgroundBoard.setResizable(true);
 		backgroundBoard.setVisible(true);
+		
+		background.displayData(players, playerNum);
 		
 		boolean game = true;
 		startGame();
@@ -662,22 +666,22 @@ public class DeadWood extends JFrame {
 		deck.add(Czechs);
 		Collections.shuffle(deck);
 		Scanner scan = new Scanner(System.in);
-		if(playerNum < 4)
+		if(numPlayers < 4)
 		{
 			maxDay = 3;
 		}
-		if(playerNum < 2 || playerNum > 8)
+		if(numPlayers < 2 || numPlayers > 8)
 		{
 			System.out.println("Please enter a number between 2 and 8");
 		}
 		else
 		{
-			for(int i = 0; i < playerNum; i++)
+			for(int i = 0; i < numPlayers; i++)
 			{
 				System.out.println("Please enter the player name");
 				Player p;
 				String pName = scan.next();
-				if(playerNum >= 7)
+				if(numPlayers >= 7)
 				{
 					p = new Player(pName, Trailers, 2);
 				}
@@ -685,11 +689,11 @@ public class DeadWood extends JFrame {
 				{
 					p = new Player(pName, Trailers, 1);
 				}
-				if(playerNum == 5)
+				if(numPlayers == 5)
 				{
 					p.changeCredits(2);
 				}
-				if(playerNum == 6)
+				if(numPlayers == 6)
 				{
 					p.changeCredits(4);
 				}
