@@ -8,7 +8,9 @@ public class Player {
 	private Role playerRole;
 	private String Name;
 	private int rCounter;
-	
+	private String fileName;
+	private int turnPhase = 0;
+
 	public Player(String n, Area start, int r)
 	{
 		Dollars = 0;
@@ -16,6 +18,17 @@ public class Player {
 		Rank = r;
 		Location = start;
 		Name = n;
+	}
+	public int getPhase()
+	{
+		return turnPhase;
+	}
+	public void setPhase(int x)
+	{
+		turnPhase = x;
+	}
+	public void setFile(String str){
+		fileName = str;
 	}
 	public String getName()
 	{
@@ -43,30 +56,38 @@ public class Player {
 	//Moves player, displays information about room moved to
 	public void move(Area newLocation)
 	{
-		if(Location.getAdjacent().contains(newLocation))
+		if(turnPhase == 0)
 		{
-			System.out.println();
-			Location.moveOff(this);
-			Location = newLocation;
-			Location.moveOn(this);
-			System.out.println("Player " + Name + "'s location is " + Location.getName());
-			ArrayList<Area> adj = Location.getAdjacent();
-			System.out.println("This room is adjacent to");
-			System.out.print(adj.get(0).getName());
-			for(int i = 1; i < adj.size(); i++)
+			if(playerRole == null)
 			{
-				System.out.print(", " + adj.get(i).getName());
+				if(Location.getAdjacent().contains(newLocation))
+				{
+					System.out.println();
+					Location.moveOff(this);
+					Location = newLocation;
+					Location.moveOn(this);
+					turnPhase = 1;
+					
+					System.out.println("Player " + Name + "'s location is " + Location.getName());
+					ArrayList<Area> adj = Location.getAdjacent();
+					System.out.println("This room is adjacent to");
+					System.out.print(adj.get(0).getName());
+					for(int i = 1; i < adj.size(); i++)
+					{
+						System.out.print(", " + adj.get(i).getName());
+					}
+					System.out.println();
+					System.out.println("With roles:");
+					ArrayList<Role> roleList = Location.getRoles();
+					for(int i = 0 ; i < roleList.size(); i++)
+					{
+						Role r = roleList.get(i);
+						System.out.println(r.getName() + ": \"" + r.getDetails() + "\", rank " + r.getRank());
+					}
+
+					System.out.println();
+				}
 			}
-			System.out.println();
-			System.out.println("With roles:");
-			ArrayList<Role> roleList = Location.getRoles();
-			for(int i = 0 ; i < roleList.size(); i++)
-			{
-				Role r = roleList.get(i);
-				System.out.println(r.getName() + ": \"" + r.getDetails() + "\", rank " + r.getRank());
-			}
-			
-			System.out.println();
 		}
 	}
 	public void changeDollars(int amt)
@@ -81,7 +102,7 @@ public class Player {
 	{
 		rCounter ++;
 	}
-	
+
 	//Also ensures that player has a role, determines gains from acting
 	public void act(Scene s)
 	{
@@ -239,7 +260,7 @@ public class Player {
 			return false;
 		}
 	}
-	
+
 	public Area getLocation() {
 		return Location;
 	}
@@ -251,7 +272,7 @@ public class Player {
 		int count = Dollars + Credits + 5*Rank;
 		return count;
 	}
-	
+
 	//resets the players on area
 	public void reset(Area a){
 		Location.moveOff(this);

@@ -9,13 +9,28 @@ public class Area {
 	private ArrayList<Role> roleList = new ArrayList<Role>();
 	private ArrayList<Area> adjacentRooms = new ArrayList<Area>();
 	private Scene roomScene;
-	
+	private int[][] xyLocations;
+	private int[] size = {115, 205};
+
 	//Self-explanatory, constructors + getters/setters
-	public Area(String name, ArrayList<Role> roles, int shots) {
+	public Area(String name, ArrayList<Role> roles, int shots, int[][] locs) {
 		roomName = name;
 		roleList = roles;
 		shotsLeft = shots;
 		currentShots = shotsLeft;
+		xyLocations = locs;
+	}
+	public void setSize(int[] s)
+	{
+		size = s;
+	}
+	public int[] getSize()
+	{
+		return size;
+	}
+	public int[][] getXY()
+	{
+		return xyLocations;
 	}
 	public void addRooms(Area room)
 	{

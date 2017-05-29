@@ -2,21 +2,28 @@ import java.util.*;
 
 public class Scene {
 	private String name;
+	private String fileName;
 	private int Difficulty;
 	private ArrayList<Role> roleList = new ArrayList<Role>();
 	private String details;
 	private boolean isFlipped;
 	private int sceneNum;
 	private Area location;
-	
+	private int[] xy;
+
 	//Constructor for the scene object
-	public Scene(String n, int num, String deets, int budget)
+	public Scene(String n, int num, String deets, int budget, String fName)
 	{
 		name = n;
 		Difficulty = budget;
 		sceneNum = num;
 		details = deets;
+		fileName = fName;
 		isFlipped = false;
+	}
+	public String getFile()
+	{
+		return fileName;
 	}
 	public int getNum()
 	{
@@ -25,6 +32,7 @@ public class Scene {
 	public void setLoc(Area a)
 	{
 		location = a;
+		xy = a.getXY()[0];
 	}
 	public void addRoles(Role r)
 	{
@@ -42,7 +50,7 @@ public class Scene {
 	{
 		return name;
 	}
-	
+
 	//Starts the shoot for the current movie in the location
 	//Also displays available roles
 	public void startShoot()
@@ -58,13 +66,13 @@ public class Scene {
 		System.out.println();
 		isFlipped = true;
 	}
-	
+
 	//Budget of the movie
 	public int getDiff()
 	{
 		return Difficulty;
 	}
-	
+
 	//Wraps the movie when the shot counter = 0
 	public void finalCut()
 	{
@@ -86,7 +94,8 @@ public class Scene {
 				System.out.println("Player " + p.getName() + "gets " + diceRolls.get(i) + " dollars");
 			}
 		}
-		
+		xy[0] = 0;
+		xy[1] = 0;
 		location.setScene(null);
 		ArrayList<Player> pList = location.getPlayers();
 		location = null;
@@ -106,9 +115,12 @@ public class Scene {
 			pTemp.removeRole();
 			pTemp.resetCounter();
 		}
-		
+
 	}
-	
+	public int[] getXY()
+	{
+		return xy;
+	}
 	//Flips the card, will be used in GUI
 	public void flip(boolean f)
 	{
