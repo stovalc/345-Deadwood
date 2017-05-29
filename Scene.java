@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Scene {
 	private String name;
+	private String fileName;
 	private int Difficulty;
 	private ArrayList<Role> roleList = new ArrayList<Role>();
 	private String details;
@@ -10,12 +11,13 @@ public class Scene {
 	private Area location;
 	
 	//Constructor for the scene object
-	public Scene(String n, int num, String deets, int budget)
+	public Scene(String n, int num, String deets, int budget, String fName)
 	{
 		name = n;
 		Difficulty = budget;
 		sceneNum = num;
 		details = deets;
+		fileName = fName;
 		isFlipped = false;
 	}
 	public int getNum()

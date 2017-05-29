@@ -5,15 +5,26 @@ public class Role {
 	private int Rank;
 	private boolean extra; //whether or not the role is on or off the board, false = on card
 	private Player person;
+	private int[] xyLoc;
+	private int size;
 	
 	//Basic constructor/getters/setters
-	public Role(String n, String d, int R, boolean e)
+	public Role(String n, String d, int R, boolean e, int[] xy)
 	{
 		name = n;
 		details = d;
 		Rank = R;
 		extra = e;
 		person = null;
+		xyLoc = xy;
+		if(e)
+		{
+			size = 46;
+		}
+		else
+		{
+			size = 40;
+		}
 	}
 	public Player getPlayer()
 	{
