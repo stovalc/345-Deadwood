@@ -1,0 +1,35 @@
+
+//this code might work for displaying correct player image
+//in deadwood.java
+String pick;
+boolean didUp;
+if(opt == 6)
+{
+	pick = backgroundBoard.showOpt("Ranks that can be upgraded to\n", s1, ranks.toArray(new Object[ranks.size()]));
+	if(pick != null)
+	{
+		didUp = p.upgradeCredits(Integer.parseInt(pick));
+	}
+}
+else
+{
+	pick =  backgroundBoard.showOpt("Ranks that can be upgraded to\n", s2, ranks.toArray(new Object[ranks.size()]));
+	if(pick != null)
+	{
+		didUp = p.upgradeMoney(Integer.parseInt(pick));
+	}
+}
+if(didUp)
+{
+	backgroundBoard.setDice(turn, p.getRank());
+	
+}
+
+
+//then in gamedisplay add this method
+public void setDice(int t, int r)
+{
+	Player p = pList.get(t);
+	p.setIcon(new ImageIcon(//get dice file from arraylist of dice files based on player number and their rank ));
+	displayData(pList, turn);
+}
