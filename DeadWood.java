@@ -810,7 +810,7 @@ public class DeadWood extends GameDisplay {
 						areaName.add(a.get(i).getName());
 					}
 					Object[] list = areaName.toArray(new Object[areaName.size()]);
-					String pick = backgroundBoard.showOpt("Areas you can move to\n", "areas", list);
+					String pick = backgroundBoard.showOpt("Areas you can move to\n", "Areas", list);
 					if(pick != null)
 					{
 						for(int i = 0; i < a.size(); i++)
@@ -917,7 +917,7 @@ public class DeadWood extends GameDisplay {
 						String s1 = "Credits";
 						String s2 = "Dollars";
 						ArrayList<String> ranks = new ArrayList<String>();
-						for(int i = p.getRank(); i <= 6; i++)
+						for(int i = p.getRank()+1; i <= 6; i++)
 						{
 							ranks.add(Integer.toString(i));
 						}
