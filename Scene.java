@@ -31,8 +31,18 @@ public class Scene {
 	}
 	public void setLoc(Area a)
 	{
-		location = a;
-		xy = a.getXY()[0];
+
+			location = a;
+			if(a != null)
+			{
+				xy = a.getXY()[0];
+			}
+			else
+			{
+				xy[0] = -500;
+				xy[1] = -500;
+			}
+
 	}
 	public void addRoles(Role r)
 	{
@@ -115,6 +125,8 @@ public class Scene {
 			pTemp.removeRole();
 			pTemp.resetCounter();
 		}
+		xy[0] = -500;
+		xy[1] = -500;
 
 	}
 	public int[] getXY()

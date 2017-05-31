@@ -10,6 +10,7 @@ public class Player {
 	private int rCounter;
 	private String fileName;
 	private int turnPhase = 0;
+	private int[] xyLoc = {991 - 600, 248 - 450};
 
 	public Player(String n, Area start, int r)
 	{
@@ -18,6 +19,15 @@ public class Player {
 		Rank = r;
 		Location = start;
 		Name = n;
+	}
+	public int[] getXY()
+	{
+		return xyLoc;
+	}
+	public void setXY(int x, int y)
+	{
+		xyLoc[0] = x;
+		xyLoc[1] = y;
 	}
 	public int getPhase()
 	{
@@ -67,7 +77,7 @@ public class Player {
 					Location = newLocation;
 					Location.moveOn(this);
 					turnPhase = 1;
-					
+					this.setXY(Location.getXY()[0][0] - 600, Location.getXY()[0][1] - 450);
 					System.out.println("Player " + Name + "'s location is " + Location.getName());
 					ArrayList<Area> adj = Location.getAdjacent();
 					System.out.println("This room is adjacent to");
@@ -79,12 +89,14 @@ public class Player {
 					System.out.println();
 					System.out.println("With roles:");
 					ArrayList<Role> roleList = Location.getRoles();
+					if(roleList != null)
+					{
 					for(int i = 0 ; i < roleList.size(); i++)
 					{
 						Role r = roleList.get(i);
 						System.out.println(r.getName() + ": \"" + r.getDetails() + "\", rank " + r.getRank());
 					}
-
+				}
 					System.out.println();
 				}
 			}
@@ -168,18 +180,14 @@ public class Player {
 		return playerRole;
 	}
 	//Determines whether player can upgrade rank, if so does such
-	public boolean Upgrade(int newR, boolean type)
+	public boolean upgradeCredits(int newR)
 	{
 		if(newR == 2)
 		{
-			if(Dollars >= 4 && type)
+			if(Credits >= 5)
 			{
 				Rank = 2;
-				return true;
-			}
-			else if(Credits >= 5 && !type)
-			{
-				Rank = 2;
+				Credits -= 5;
 				return true;
 			}
 			else
@@ -189,13 +197,9 @@ public class Player {
 		}
 		else if(newR == 3)
 		{
-			if(Dollars >= 10 && type)
+			if(Credits >= 10)
 			{
-				Rank = 3;
-				return true;
-			}
-			else if(Credits >= 10 && !type)
-			{
+				Credits -= 10;
 				Rank = 3;
 				return true;
 			}
@@ -206,13 +210,9 @@ public class Player {
 		}
 		else if(newR == 4)
 		{
-			if(Dollars >= 18 && type)
+			if(Credits >= 15)
 			{
-				Rank = 4;
-				return true;
-			}
-			else if(Credits >= 15 && !type)
-			{
+				Credits -= 15;
 				Rank = 4;
 				return true;
 			}
@@ -223,12 +223,8 @@ public class Player {
 		}
 		else if(newR == 5)
 		{
-			if(Dollars >= 28 && type)
-			{
-				Rank = 5;
-				return true;
-			}
-			else if(Credits >= 20 && !type)
+			Credits -= 20;
+			if(Credits >= 20)
 			{
 				Rank = 5;
 				return true;
@@ -240,13 +236,82 @@ public class Player {
 		}
 		else if(newR == 6)
 		{
-			if(Dollars >= 40 && type)
+			Credits -= 25;
+			if(Credits >= 25)
 			{
 				Rank = 6;
 				return true;
 			}
-			else if(Credits >= 25 && !type)
+			else
 			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public boolean upgradeMoney(int newR)
+	{
+		if(newR == 2)
+		{
+			if(Dollars >= 4)
+			{
+				Dollars -= 4;
+				Rank = 2;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else if(newR == 3)
+		{
+			if(Dollars >= 10)
+			{
+				Dollars -= 10;
+				Rank = 3;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else if(newR == 4)
+		{
+			if(Dollars >= 18)
+			{
+				Dollars -= 18;
+				Rank = 4;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else if(newR == 5)
+		{
+			if(Dollars >= 28)
+			{
+				Dollars -= 28;
+				Rank = 5;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else if(newR == 6)
+		{
+			if(Dollars >= 40)
+			{
+				Dollars -= 40;
 				Rank = 6;
 				return true;
 			}

@@ -26,6 +26,10 @@ public class Role {
 			size = 40;
 		}
 	}
+	public int[] getXY()
+	{
+		return xyLoc;
+	}
 	public Player getPlayer()
 	{
 		return person;

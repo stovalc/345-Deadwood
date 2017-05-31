@@ -16,19 +16,27 @@ import javax.imageio.ImageIO;
 
 
 public class GameDisplay extends JFrame implements ActionListener {
-	private JPanel board;
-	private JPanel data;
-	private JButton move;
-	private JButton act;
-	private int playNum;
-	private ArrayList<Player> pList;
-	private JButton rehearse;
-	private JLayeredPane background;
-    private Dimension boardSize = new Dimension(1200, 900);
-    private Dimension paneSize = new Dimension(1300, 1000);
-    private JLabel[] playerInfo = {new JLabel("Player 1"), new JLabel("Player 2"), new JLabel("Player 3"), new JLabel("Player 4"), new JLabel("Player 5"), new JLabel("Player 6"), new JLabel("Player 7"), new JLabel("Player 8")};
-    //JLabel dayNum = new JLabel("Day Number: " + DeadWood.day + "/4");
-  private JLabel[] playerNames;
+		private JPanel board;
+		private JPanel data;
+		private JButton move;
+		private JButton act;
+		private JButton endTurn;
+
+		private int turnOpt;
+		private ArrayList<JLabel> cards = new ArrayList<JLabel>();
+		private JButton work;
+		private JButton upgradeMoney;
+		private JButton upgradeCredits;
+		private int playNum;
+		private Player currP;
+		private ArrayList<Player> pList;
+		private JButton rehearse;
+		private JLayeredPane background;
+	  private Dimension boardSize = new Dimension(1200, 900);
+	  private Dimension paneSize = new Dimension(1300, 1000);
+	  private JLabel[] playerInfo = {new JLabel("Player 1"), new JLabel("Player 2"), new JLabel("Player 3"), new JLabel("Player 4"), new JLabel("Player 5"), new JLabel("Player 6"), new JLabel("Player 7"), new JLabel("Player 8")};
+	  //JLabel dayNum = new JLabel("Day Number: " + DeadWood.day + "/4");
+	  private JLabel[] playerNames;
 
 
     public static int numPlayers;
@@ -46,23 +54,24 @@ public class GameDisplay extends JFrame implements ActionListener {
 		JLabel backgroundImage = new JLabel(new ImageIcon("board.jpg"));
 		board.add(backgroundImage);
 
+
 		//Adding turn based action buttons
 		JPanel buttons = new JPanel();
-		buttons.setLayout(new GridLayout(4, 1));
+		buttons.setLayout(new GridLayout(2, 4));
 		buttons.setBounds(0, boardSize.height, boardSize.width, 68);
-		move = new JButton("Move");
+	  move = new JButton("Move");
 		move.setPreferredSize(new Dimension(40, 40));
 		act = new JButton("Act");
 		act.setPreferredSize(new Dimension(40, 40));
-		rehearse = new JButton("Rehearse");
+	  rehearse = new JButton("Rehearse");
 		rehearse.setPreferredSize(new Dimension(40, 40));
-		JButton upgradeMoney = new JButton("Upgrade using money");
+	  upgradeMoney = new JButton("Upgrade using money");
 		upgradeMoney.setPreferredSize(new Dimension(40, 40));
-		JButton upgradeCredits = new JButton("Upgrade using credits");
+	  upgradeCredits = new JButton("Upgrade using credits");
 		upgradeCredits.setPreferredSize(new Dimension(40, 40));
-		JButton endTurn = new JButton("End Turn");
+    endTurn = new JButton("End Turn");
 		endTurn.setPreferredSize(new Dimension(40, 40));
-		JButton work = new JButton("Work");
+		work = new JButton("Work");
 		work.setPreferredSize(new Dimension(40, 40));
 		buttons.add(work);
 		buttons.add(move);
@@ -77,7 +86,10 @@ public class GameDisplay extends JFrame implements ActionListener {
 		move.addActionListener(this);
 		act.addActionListener(this);
 		rehearse.addActionListener(this);
-
+		endTurn.addActionListener(this);
+		work.addActionListener(this);
+		upgradeMoney.addActionListener(this);
+		upgradeCredits.addActionListener(this);
 
 		//Adding the data display
 		data = new JPanel();
@@ -91,72 +103,85 @@ public class GameDisplay extends JFrame implements ActionListener {
 		background.add(data, JLayeredPane.DEFAULT_LAYER);
 
 	}
+	public String showOpt(String s1, String s2, Object[] list)
+	{
+		return (String)JOptionPane.showInputDialog(null, s1, s2, JOptionPane.DEFAULT_OPTION, null, list, "0");
+	}
+	public int getOpt()
+	{
+		return turnOpt;
+	}
+	public void setOpt()
+	{
+		turnOpt = 0;
+	}
+	//Button event listener
 	public  void actionPerformed(ActionEvent e) {
 		 JButton source = (JButton)e.getSource();
-		 Player p = pList.get(playNum);
+
 		if(source.equals(move))
 		{
-
-			ArrayList<Area> locs = p.getLocation().getAdjacent();
-			ArrayList<String> locName = new ArrayList<String>();
-			for(int i = 0; i < locs.size(); i++)
-			{
-				locName.add(locs.get(i).getName());
-			}
-			Area moveTo = null;
-			Object[] options = locName.toArray(new Object[locName.size()]);
-			if(p.getPhase()!= 0)
-			{
-				options = null;
-			}
-			String pick = (String)JOptionPane.showInputDialog(null, "Please choose desired area", "Areas", JOptionPane.DEFAULT_OPTION, null, options, "0");
-			for(int i = 0; i < locs.size(); i++)
-			{
-				if(locs.get(i).getName().equals(pick))
-				{
-					moveTo = locs.get(i);
-				}
-			}
-			p.move(moveTo);
-
-			//update the player location
-			Area newA = p.getLocation();
-			int[] xy = newA.getXY()[0];
-			playerNames[playNum].setLocation(xy[0] - 600, xy[1] - 450);
-
+			turnOpt = 1;
 		}
 		if(source.equals(act))
 		{
-			if(p.getRole()!= null)
-			{
-				p.act(p.getLocation().getScene());
-			}
+			turnOpt = 2;
 		}
 		if(source.equals(rehearse))
 		{
-			if(p.getRole()!= null)
-			{
-				p.rehearse();
-			}
+			turnOpt = 3;
+		}
+		if(source.equals(endTurn))
+		{
+			turnOpt = 4;
+		}
+		if(source.equals(upgradeMoney))
+	  {
+			turnOpt = 5;
+		}
+		if(source.equals(upgradeCredits))
+	  {
+			turnOpt = 6;
+		}
+		if(source.equals(work))
+		{
+			turnOpt = 7;
 		}
 	}
+public void removeCards()
+{
+	for(int i = 0; i < cards.size(); i++)
+	{
+		JLabel card = cards.get(i);
+		card.setEnabled(false);
+		cards.remove(card);
+		card.setLocation(-500, -500);
+	}
+}
+	//Initializes cards on the board
 	public void setCard(Scene s)
 	{
 		JLabel newS = new JLabel(new ImageIcon(s.getFile()));
 		newS.setBounds(0, 0, boardSize.width, boardSize.height);
 		newS.setLocation(s.getXY()[0] - 600 + 205/2, s.getXY()[1] - 450 + 115/2);
-		background.add(newS, JLayeredPane.DRAG_LAYER );
+		background.add(newS, JLayeredPane.MODAL_LAYER );
+		cards.add(newS);
+	}
+	public void removeCard(int i)
+	{
+		JLabel card = cards.get(i);
+		card.setEnabled(false);
+		cards.remove(card);
+		card.setLocation(-500, -500);
 	}
 		//Drop down options for number of players
 		public static int numOfPlayers(){
 			Object[] options = {"2", "3", "4", "5", "6", "7", "8"};
 			String pick = (String)JOptionPane.showInputDialog(null, "Please choose the number of players.\n", "Number of players?", JOptionPane.DEFAULT_OPTION, null, options, "0");
 			numPlayers = Integer.parseInt(pick);
-
-
-
 			return numPlayers;
 		}
+
 		public static int getNumOfPlayers(){
 			return numPlayers;
 		}
@@ -164,10 +189,9 @@ public class GameDisplay extends JFrame implements ActionListener {
 		public void playerIcons(ArrayList<Player> players){
 			pList = players;
 			numPlayers = players.size();
+
 			playerNames = new JLabel[numPlayers];
 			ImageIcon[] playerPics = new ImageIcon[numPlayers];
-
-
 
 			String[] blueDice = {"b1.png", "b2.png", "b3.png", "b4.png", "b5.png", "b6.png"};
 			String[] cyanDice = {"c1.png", "c2.png", "c3.png", "c4.png", "c5.png", "c6.png"};
@@ -193,12 +217,18 @@ public class GameDisplay extends JFrame implements ActionListener {
 			}
 
 		}
+		public void setPlayer(int t)
+		{
+			playNum = t;
+		}
 
 		public int displayData(ArrayList<Player> players, int playerNum){
 			playNum = playerNum;
-			int numPlayers = players.size();
+			pList = players;
+		  numPlayers = players.size();
 			//dayNum.setText("Day Number: " + Deadwood.day);
 			for (int i = 0; i < numPlayers; i++){
+				Player p = pList.get(i);
 				playerInfo[i].setVerticalTextPosition(JLabel.TOP);
 				playerInfo[i].setHorizontalTextPosition(JLabel.RIGHT);
 				String[] playerColors = {"Blue", "Cyan", "Green", "Orange", "Pink", "Red", "Violet", "Yellow"};
@@ -208,6 +238,7 @@ public class GameDisplay extends JFrame implements ActionListener {
 				} else {
 					playerInfo[i].setText("<html>Player: " + (i + 1) + "<br>Credits: " + players.get(i).getCredits() + "<br>Dollars: " + players.get(i).getDollars() + "<br>Rank: " + players.get(i).getRank()+"</html>");
 				}
+				playerNames[i].setLocation(p.getXY()[0], p.getXY()[1]);
 			}
 			return 0;
 		}

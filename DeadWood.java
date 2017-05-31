@@ -1,7 +1,7 @@
 import java.util.*;
 import javax.swing.*;
 
-public class DeadWood extends JFrame {
+public class DeadWood extends GameDisplay {
 	public static int day;
 	private static int turn;
 	private static ArrayList<Scene> deck = new ArrayList<Scene>();
@@ -16,7 +16,7 @@ public class DeadWood extends JFrame {
 	public static int numPlayers;
 
 	//Controls basic game flow
-	public static void main(String[] args)
+	public static void main(String[] args) throws InterruptedException
 	{
 
 //		Scanner scan = new Scanner(System.in);
@@ -38,10 +38,10 @@ public class DeadWood extends JFrame {
 		backgroundBoard.setResizable(true);
 		backgroundBoard.setVisible(true);
 
-		backgroundBoard.displayData(playerList, playerNum);
 
 		boolean game = true;
 		startGame();
+		//backgroundBoard.displayData(playerList, playerNum);
 
 		while(game)
 		{
@@ -52,9 +52,10 @@ public class DeadWood extends JFrame {
 				while(board.size() > 1)
 				{
 					backgroundBoard.displayData(playerList, turn);
-					takeTurn(turn);
 
+					takeTurn(turn);
 					turn++;
+
 					if(turn == playerList.size())
 					{
 						turn = 0;
@@ -123,7 +124,7 @@ public class DeadWood extends JFrame {
 		sHRoles.add(tKnife);
 		sHRoles.add(dTom);
 		sHRoles.add(pLost);
-		Area sHideout = new Area("Secret Hideout", ranRoles, 3, new int[][]{new int[]{27, 732}, new int[]{244, 764}, new int[]{299, 764}, new int[]{354, 764}});
+		Area sHideout = new Area("Secret Hideout", sHRoles, 3, new int[][]{new int[]{27, 732}, new int[]{244, 764}, new int[]{299, 764}, new int[]{354, 764}});
 
 		locations.add(sHideout);
 
@@ -176,7 +177,7 @@ public class DeadWood extends JFrame {
 		ArrayList<Role> jailRoles= new ArrayList<Role>();
 		jailRoles.add(pCell);
 		jailRoles.add(fIrons);
-		Area Jail = new Area("Jail", jailRoles, 1, new int[][]{new int[]{370, 282}, new int[]{442, 156}});
+		Area Jail = new Area("Jail", jailRoles, 1, new int[][]{new int[]{281, 27}, new int[]{442, 156}});
 
 		locations.add(Jail);
 
@@ -719,7 +720,7 @@ public class DeadWood extends JFrame {
 		{
 			System.out.println(win.get(0).getName() + " won the game with a score of " + win.get(0).getMoney());
 		}
-}
+	}
 
 	//Replaces the cards left on board + places others, essentially resets day
 	public static void resetDay()
@@ -732,9 +733,13 @@ public class DeadWood extends JFrame {
 			temp.flip(true);
 			temp.getLoc().removeScene();
 			temp.setLoc(null);
-			deck.add(temp);
-			board.remove(i);
+			discard.add(temp);
+			int rem;
+			rem = board.indexOf(temp);
+			board.remove(temp);
+
 		}
+		backgroundBoard.removeCards();
 		for(int i = 0; i < playerList.size(); i ++)
 		{
 			Player p = playerList.get(i);
@@ -753,9 +758,6 @@ public class DeadWood extends JFrame {
 			if(disc != null)
 			{
 				a.removeScene();
-				disc.setLoc(null);
-				board.remove(disc);
-				discard.add(disc);
 			}
 			a.resetShots();
 			Scene temp;
@@ -764,6 +766,7 @@ public class DeadWood extends JFrame {
 			temp.setLoc(a);
 			a.setScene(temp);
 			board.add(temp);
+			backgroundBoard.setCard(temp);
 		}
 		day++;
 	}
@@ -771,273 +774,242 @@ public class DeadWood extends JFrame {
 	//turn logic goes here, i.e have player choose to move, rehearse, act, upgrade, or take role
 	//if player moves allow them to upgrade or take role after.
 	//Uses turn-based cases for decisions
-	public static void takeTurn(int player)
+	public static void takeTurn(int player)throws InterruptedException
 	{
-
-		Scanner scan = new Scanner(System.in);
+		String choice = "";
 		Player p = playerList.get(player);
 		p.setPhase(0);
 		Area loc = p.getLocation();
 		Scene s = loc.getScene();
 		System.out.println(p.getName() + "'s turn");
-		boolean cont = true;
-		boolean turn = true;
-		boolean extend = true;
-
-		while(turn)
+		int opt = 0;
+		if(p.getRole()!= null)
 		{
-			String line = scan.nextLine();
-			Scanner lineScan = new Scanner(line);
-			ArrayList<String> input = new ArrayList<String>();
-			while(lineScan.hasNext())
+			p.setPhase(2);
+		}
+		while(p.getPhase() != 3)
+		{
+			while(opt == 0)
 			{
-				input.add(lineScan.next());
+			 	opt = backgroundBoard.getOpt();
+				Thread.sleep(3);
 			}
-			if(input.get(0).equals("end"))
+			if(opt == 4)
 			{
-				turn = false;
+				p.setPhase(3);
 			}
-			else
+			if(opt == 1)
 			{
-				if(input.get(0).equals("move"))
+				if(p.getPhase() == 0)
 				{
-					if(cont && extend)
+					int place = 0;
+					ArrayList<Area> a = loc.getAdjacent();
+					ArrayList<String> areaName = new ArrayList<String>();
+					for(int i = 0; i < a.size(); i++)
 					{
-						if(p.getRole()== null)
+						areaName.add(a.get(i).getName());
+					}
+					Object[] list = areaName.toArray(new Object[areaName.size()]);
+					String pick = backgroundBoard.showOpt("Areas you can move to\n", "areas", list);
+					if(pick != null)
+					{
+						for(int i = 0; i < a.size(); i++)
 						{
-							boolean contain = false;
-							int place = 0;
-							ArrayList<Area> a = loc.getAdjacent();
-							String str = input.get(1);
-							for(int i = 2; i < input.size(); i++)
+							if(a.get(i).getName().equals(pick))
 							{
-								str += " ";
-								str += input.get(i);
+								place = i;
+							}
+						}
+						p.move(a.get(place));
+						backgroundBoard.displayData(playerList, turn);
+						loc = p.getLocation();
+						s = loc.getScene();
+						p.setPhase(1);
+						if(s != null)
+						{
+							s.startShoot();
+						}
+					}
+				}
+				else
+				{
+					System.out.println("Player has already taken a vital turn action");
+				}
+			}
+			//rehearse
+			if(opt == 3)
+			{
+				if(p.getPhase() == 2)
+				{
+					p.rehearse();
+					p.setPhase(3);
+				}
+				else
+				{
+					System.out.println("Player cannot rehearse while not working on role");
+				}
+			}
+			//act
+			if(opt == 2)
+			{
+				if(p.getPhase() == 2)
+				{
+					p.act(s);
+					if(loc.getShots() == 0)
+					{
 
-							}
-							System.out.println(str);
+						s.finalCut();
+						backgroundBoard.removeCard(board.indexOf(s));
+						board.remove(s);
+						discard.add(s);
 
-							for(int i = 0; i < a.size(); i++)
+					}
+					p.setPhase(3);
+				}
+				else
+				{
+					System.out.println("Player cannot act while not working on role");
+				}
+			}
+			/*
+			if(input.get(0).equals("who"))
+			{
+				System.out.println();
+				System.out.print(p.getName() + "($" + p.getDollars() + ", " + p.getCredits() + "cr) ");
+				Role r = p.getRole();
+				if(r != null)
+				{
+					System.out.println(r.getName() + ", \"" + r.getDetails() + "\"");
+				}
+				System.out.println();
+			}
+
+			if(input.get(0).equals("where"))
+			{
+				Area a = p.getLocation();
+				System.out.println();
+				System.out.print("in " + a.getName());
+				int sLeft = a.getShots();
+				if(sLeft != 0)
+				{
+					Scene tempS = a.getScene();
+					System.out.println(" shooting " + tempS.getName() + " scene " + tempS.getNum());
+				}
+				else
+				{
+					System.out.println("wrapped");
+				}
+				System.out.println();
+			}
+			*/
+			//Give option to either take role or upgrade if applicable
+			if(opt == 5 || opt == 6)
+			{
+				if(p.getLocation().getName().equals("Casting Office"))
+				{
+					if(p.getRank() == 6)
+					{
+						System.out.println("Already at max rank");
+					}
+					else
+					{
+						boolean type = false;
+						String s1 = "Credits";
+						String s2 = "Dollars";
+						ArrayList<String> ranks = new ArrayList<String>();
+						for(int i = p.getRank(); i <= 6; i++)
+						{
+							ranks.add(Integer.toString(i));
+						}
+						String pick;
+						boolean didUp;
+						if(opt == 6)
+						{
+							pick = backgroundBoard.showOpt("Ranks that can be upgraded to\n", s1, ranks.toArray(new Object[ranks.size()]));
+							if(pick != null)
 							{
-								if(a.get(i).getName().equals(str))
-								{
-									contain = true;
-									place = i;
-								}
-							}
-							if(contain)
-							{
-								p.move(a.get(place));
-								loc = p.getLocation();
-								s = loc.getScene();
-								if(s != null)
-								{
-									s.startShoot();
-								}
-								cont = false;
-							}
-							else
-							{
-								System.out.println("Area not adjacent to current room");
+								didUp = p.upgradeCredits(Integer.parseInt(pick));
 							}
 						}
 						else
 						{
-							System.out.println("Player cannot move while working on a role");
-						}
-					}
-					else
-					{
-						System.out.println("Player has already taken a vital turn action");
-					}
-				}
-				if(input.get(0).equals("Rehearse"))
-				{
-					if(cont && extend)
-					{
-						if(p.getRole()!= null)
-						{
-							p.rehearse();
-							cont = false;
-						}
-						else
-						{
-							System.out.println("Player cannot rehearse while not working on role");
-						}
-					}
-					else
-					{
-						System.out.println("Player has already taken a vital turn action");
-					}
-				}
-				if(input.get(0).equals("act"))
-				{
-					if(cont && extend)
-					{
-						if(p.getRole() != null)
-						{
-							p.act(s);
-							if(loc.getShots() == 0)
+							pick =  backgroundBoard.showOpt("Ranks that can be upgraded to\n", s2, ranks.toArray(new Object[ranks.size()]));
+							if(pick != null)
 							{
-								s.finalCut();
-								board.remove(s);
-								discard.add(s);
+								didUp = p.upgradeMoney(Integer.parseInt(pick));
 							}
-							cont = false;
-						}
-						else
-						{
-							System.out.println("Player cannot act while not working on role");
 						}
 					}
-					else
-					{
-						System.out.println("Player has already taken a vital turn action");
-					}
 				}
-
-				if(input.get(0).equals("who"))
+				else
 				{
-					System.out.println();
-					System.out.print(p.getName() + "($" + p.getDollars() + ", " + p.getCredits() + "cr) ");
-					Role r = p.getRole();
-					if(r != null)
-					{
-						System.out.println(r.getName() + ", \"" + r.getDetails() + "\"");
-					}
-					System.out.println();
+					System.out.println("Player not at casting office");
 				}
-				if(input.get(0).equals("where"))
+			}
+			//work
+			if(opt == 7)
+			{
+				if(p.getPhase() != 2)
 				{
-					Area a = p.getLocation();
-					System.out.println();
-					System.out.print("in " + a.getName());
-					int sLeft = a.getShots();
-					if(sLeft != 0)
+					loc = p.getLocation();
+					//display roles player can take, etc.
+					s = loc.getScene();
+					if(s != null || loc.getRoles() != null)
 					{
-						Scene tempS = a.getScene();
-						System.out.println(" shooting " + tempS.getName() + " scene " + tempS.getNum());
-					}
-					else
-					{
-						System.out.println("wrapped");
-					}
-					System.out.println();
-				}
-
-				//Give option to either take role or upgrade if applicable
-				if(input.get(0).equals("upgrade"))
-				{
-					if(extend)
-					{
-						if(p.getLocation().getName().equals("Casting Office"))
+						ArrayList<Role> r1 = s.getRoles();
+						ArrayList<Role> r2 = loc.getRoles();
+						ArrayList<Role> availRoles = new ArrayList<Role>();
+						ArrayList<String> roleNames = new ArrayList<String>();
+						for(int i = 0; i < r1.size(); i++)
 						{
-							if(p.getRank() == 6)
+							Role r = r1.get(i);
+							if(r.getPlayer() == null && r.getRank() <= p.getRank())
 							{
-								System.out.println("Already at max rank");
+								availRoles.add(r);
+								roleNames.add(r.getName());
 							}
-							else
+						}
+						for(int i = 0; i < r2.size(); i++)
+						{
+							Role r = r2.get(i);
+							if(r.getPlayer() == null && r.getRank() <= p.getRank())
 							{
-								boolean type = false;
-								if(input.get(1).equals("$"))
+								availRoles.add(r);
+								roleNames.add(r.getName());
+							}
+						}
+						String pick = backgroundBoard.showOpt("Available roles to take \n", "Roles", roleNames.toArray(new Object[roleNames.size()]));
+						if(pick != null)
+						{
+							p.setPhase(3);
+							for(int i = 0; i < availRoles.size(); i++)
+							{
+								Role r = availRoles.get(i);
+								if(r.getName().equals(pick))
 								{
-									type = true;
-								}
-								else if(input.get(1).equals("cr"))
-								{
-									type = false;
-								}
-								if(p.Upgrade(Integer.parseInt(input.get(2)), type))
-								{
-									extend = false;
-									System.out.println("Player's role is now " + input.get(2));
-								}
-								else
-								{
-									if(type)
+									int x = 0;
+									int y = 0;
+									if(!r.getStatus())
 									{
-										System.out.println("Insufficient dollars");
+										x = p.getXY()[0] + r.getXY()[0] + 20;
+										y = p.getXY()[1] + r.getXY()[1] + 20;
 									}
 									else
 									{
-										System.out.println("Insufficient credits");
+										x =  r.getXY()[0] + 24 - 600;
+										y =  r.getXY()[1] + 28 - 450;
 									}
+									p.setXY(x, y);
+									p.setRole(r);
+									backgroundBoard.displayData(playerList, turn);
 								}
 							}
 						}
-						else
-						{
-							System.out.println("Player not at casting office");
-						}
-					}
-					else
-					{
-						System.out.println("Player already taken similar action this turn");
-					}
-					//display possible upgrades for player w/ input
-				}
-				else if(input.get(0).equals("work"))
-				{
-					loc = p.getLocation();
-					String workName = input.get(1);
-					for(int i = 2; i < input.size(); i++)
-					{
-						workName  += " ";
-						workName += input.get(i);
-					}
-					//display roles player can take, etc.
-					if(p.getRole() == null)
-					{
-						s = loc.getScene();
-						if(s != null || loc.getRoles() != null)
-						{
-							ArrayList<Role> r1 = s.getRoles();
-							ArrayList<Role> r2 = loc.getRoles();
-							ArrayList<Role> availRoles = new ArrayList<Role>();
-							for(int i = 0; i < r1.size(); i++)
-							{
-								Role r = r1.get(i);
-								if(r.getPlayer() == null && r.getRank() <= p.getRank())
-								{
-									availRoles.add(r);
-								}
-							}
-							for(int i = 0; i < r2.size(); i++)
-							{
-								Role r = r2.get(i);
-								if(r.getPlayer() == null && r.getRank() <= p.getRank())
-								{
-									availRoles.add(r);
-								}
-							}
-							boolean actable = false;
-							int place = 0;
-							for(int i = 0; i < availRoles.size(); i++)
-							{
-								Role r= availRoles.get(i);
-								if(r.getName().equals(workName))
-								{
-									actable = true;
-									place = i;
-								}
-							}
-							if(actable)
-							{
-								extend = false;
-								p.setRole(availRoles.get(place));
-							}
-						}
-						else
-						{
-							System.out.println("No roles to take");
-						}
-					}
-					else
-					{
-							System.out.println("Player already has a role, cannot take another");
 					}
 				}
 			}
+			backgroundBoard.setOpt();
+			opt = 0;
 		}
 	}
 }
