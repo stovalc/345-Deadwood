@@ -702,7 +702,7 @@ public class DeadWood extends GameDisplay {
 	//Determines winner/prepares for next game
 	public static void endGame()
 	{
-		System.out.println("Game over!");
+		backgroundBoard.showMsg("Game over!", "End of Game");
 		while(discard.size() > 0)
 		{
 			Scene temp;
@@ -738,7 +738,7 @@ public class DeadWood extends GameDisplay {
 				win.add(p);
 				max = winner[i];
 			}
-			System.out.println(p.getName() + " ended the game with a score of: " + winner[i]);
+			//System.out.println(p.getName() + " ended the game with a score of: " + winner[i]);
 			//calculate score
 		}
 		System.out.println();
@@ -826,6 +826,7 @@ public class DeadWood extends GameDisplay {
 		
 		backgroundBoard.setCard(board);
 		day++;
+		backgroundBoard.showMsg("A new day has started", "New Day");
 		
 	}
 
@@ -878,11 +879,12 @@ public class DeadWood extends GameDisplay {
 								place = i;
 							}
 						}
+						String oldArea = p.getLocation().getName();
 						p.move(a.get(place));
 						loc = p.getLocation();
 						backgroundBoard.changeLayer(playerList.indexOf(p));
 						backgroundBoard.displayData(playerList, turn);
-						
+						backgroundBoard.setLastAction("<html>" + p.getName() + " moved from " + oldArea + " <br>to " + p.getLocation().getName() + "<html>");
 						s = loc.getScene();
 						p.setPhase(1);
 						
@@ -898,7 +900,7 @@ public class DeadWood extends GameDisplay {
 				}
 				else
 				{
-					System.out.println("Player has already taken a vital turn action");
+					backgroundBoard.showMsg("Player has already taken a vital turn action", "Error");
 				}
 			}
 			//rehearse
@@ -907,6 +909,7 @@ public class DeadWood extends GameDisplay {
 				if(p.getPhase() == 2)
 				{
 					p.rehearse();
+					backgroundBoard.setLastAction("<html>" + p.getName() + " rehearsed on <br>" + p.getLocation().getName() + "<html>");
 					p.setPhase(3);
 				}
 				else
@@ -928,12 +931,17 @@ public class DeadWood extends GameDisplay {
 						boardSize--;
 						s.finalCut();
 						backgroundBoard.removeCard(locations.indexOf(p.getLocation()));
+						backgroundBoard.showMsg("End of shoot", loc.getName());
 					}
 					p.setPhase(3);
+					int dollarDiff = p.getDollars() - oldDollars;
+					int creditDiff = p.getCredits() - oldCredits;
+					backgroundBoard.setLastAction("<html>" + p.getName() + " acted on <br>" + p.getLocation().getName() + "and received " + dollarDiff + " Dollars <br>" + " and " +
+					creditDiff + " Credits <html>");
 				}
 				else
 				{
-					System.out.println("Player cannot act while not working on role");
+					backgroundBoard.showMsg("Player cannot act while not working on role", "Error");
 				}
 			}
 			/*
@@ -968,19 +976,19 @@ public class DeadWood extends GameDisplay {
 			}
 			*/
 			//Give option to either take role or upgrade if applicable
-			if(opt == 5 || opt == 6)
+			if(opt == 5)
 			{
 				if(p.getLocation().getName().equals("Casting Office"))
 				{
+					int oldRank = p.getRank();
+					ArrayList<String> creditChoices = new ArrayList<>(Arrays.asList("Credits", "Dollars"));
+					String creditType = backgroundBoard.showOpt("Would you like to upgrade with credits or money?\n", "Credit Type", creditChoices.toArray(new Object[2]));
 					if(p.getRank() == 6)
 					{
-						System.out.println("Already at max rank");
+						backgroundBoard.showMsg("Already at max rank", "Error");
 					}
 					else
 					{
-						boolean type = false;
-						String s1 = "Credits";
-						String s2 = "Dollars";
 						ArrayList<String> ranks = new ArrayList<String>();
 						for(int i = p.getRank()+1; i <= 6; i++)
 						{
@@ -988,17 +996,17 @@ public class DeadWood extends GameDisplay {
 						}
 						String pick;
 						boolean didUp = false;
-						if(opt == 6)
+						if(creditType == "Credits")
 						{
-							pick = backgroundBoard.showOpt("Ranks that can be upgraded to\n", s1, ranks.toArray(new Object[ranks.size()]));
+							pick = backgroundBoard.showOpt("Ranks that can be upgraded to\n", "Credits", ranks.toArray(new Object[ranks.size()]));
 							if(pick != null)
 							{
 								didUp = p.upgradeCredits(Integer.parseInt(pick));
 							}
 						}
-						else
+						else if(creditType == "Dollars")
 						{
-							pick =  backgroundBoard.showOpt("Ranks that can be upgraded to\n", s2, ranks.toArray(new Object[ranks.size()]));
+							pick =  backgroundBoard.showOpt("Ranks that can be upgraded to\n", "Dollars", ranks.toArray(new Object[ranks.size()]));
 							if(pick != null)
 							{
 								didUp = p.upgradeMoney(Integer.parseInt(pick));
@@ -1006,13 +1014,18 @@ public class DeadWood extends GameDisplay {
 						}
 						if(didUp)
 						{
+							backgroundBoard.setLastAction("<html>" + p.getName() + " upgraded from rank " + oldRank + " <br>to " + p.getRank() + "<html>");
 							backgroundBoard.changeIcon(turn, p.getRank());
+						}
+						else
+						{
+								backgroundBoard.showMsg("Failed to upgrade", "Not enough of the credit type you chose");
 						}
 					}
 				}
 				else
 				{
-					System.out.println("Player not at casting office");
+					backgroundBoard.showMsg("Player not in Casting Office", "Error");
 				}
 			}
 			//work
@@ -1077,6 +1090,10 @@ public class DeadWood extends GameDisplay {
 							}
 						}
 					}
+					else
+					{
+						backgroundBoard.showMsg("Can't work without a role", "Error");
+}
 				}
 			}
 			backgroundBoard.setOpt();
