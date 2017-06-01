@@ -20,7 +20,6 @@ public class GameDisplay extends JFrame implements ActionListener {
 		private JPanel data;
 		private JButton move;
 		private JButton act;
-		private JPanel lastAction;
 		private JButton endTurn;
 		private ArrayList<ArrayList<JLabel>> shotCounts = new ArrayList<ArrayList<JLabel>>();
 		private ArrayList<String[]> diceNames;
@@ -39,7 +38,6 @@ public class GameDisplay extends JFrame implements ActionListener {
 	  private Dimension paneSize = new Dimension(1300, 1000);
 	  private JLabel[] playerInfo = {new JLabel("Player 1"), new JLabel("Player 2"), new JLabel("Player 3"), new JLabel("Player 4"), new JLabel("Player 5"), new JLabel("Player 6"), new JLabel("Player 7"), new JLabel("Player 8")};
 	  private JLabel dayNum = new JLabel();
-		private JLabel lastA = new JLabel();
 	  private JLabel[] playerNames;
 
 
@@ -65,16 +63,18 @@ public class GameDisplay extends JFrame implements ActionListener {
 
 		//Adding turn based action buttons
 		JPanel buttons = new JPanel();
-		buttons.setLayout(new GridLayout(2, 3));
-		buttons.setBounds(0, boardSize.height, boardSize.width-300, 68);
+		buttons.setLayout(new GridLayout(2, 4));
+		buttons.setBounds(0, boardSize.height, boardSize.width, 68);
 	  move = new JButton("Move");
 		move.setPreferredSize(new Dimension(40, 40));
 		act = new JButton("Act");
 		act.setPreferredSize(new Dimension(40, 40));
 	  rehearse = new JButton("Rehearse");
 		rehearse.setPreferredSize(new Dimension(40, 40));
-	  upgrade = new JButton("Upgrade");
-		upgrade.setPreferredSize(new Dimension(40, 40));
+	  upgradeMoney = new JButton("Upgrade using money");
+		upgradeMoney.setPreferredSize(new Dimension(40, 40));
+	  upgradeCredits = new JButton("Upgrade using credits");
+		upgradeCredits.setPreferredSize(new Dimension(40, 40));
     endTurn = new JButton("End Turn");
 		endTurn.setPreferredSize(new Dimension(40, 40));
 		work = new JButton("Work");
@@ -84,7 +84,8 @@ public class GameDisplay extends JFrame implements ActionListener {
 		buttons.add(act);
 		buttons.add(rehearse);
 		buttons.add(endTurn);
-		buttons.add(upgrade);
+		buttons.add(upgradeMoney);
+		buttons.add(upgradeCredits);
 		background.add(buttons, JLayeredPane.DEFAULT_LAYER);
 
 		//button functionality
@@ -93,7 +94,8 @@ public class GameDisplay extends JFrame implements ActionListener {
 		rehearse.addActionListener(this);
 		endTurn.addActionListener(this);
 		work.addActionListener(this);
-		upgrade.addActionListener(this);
+		upgradeMoney.addActionListener(this);
+		upgradeCredits.addActionListener(this);
 
 		//Adding the data display
 		data = new JPanel();
@@ -104,20 +106,8 @@ public class GameDisplay extends JFrame implements ActionListener {
 		for (int i = 0; i < 8; i++){
 			data.add(playerInfo[i]);
 		}
-		lastAction = new JPanel();
-
-		lastAction.setPreferredSize(new Dimension(100, 100));
-		lastAction.setBounds(900, 900, 300, 100);
-		lastAction.add(lastA);
-
-		background.add(lastAction, JLayeredPane.DEFAULT_LAYER);
 		background.add(data, JLayeredPane.DEFAULT_LAYER);
 
-		
-	}
-	public void setLastAction(String s1)
-	{
-		lastA.setText("<html> Last Action: <br><html>" + s1);
 	}
 	public String showOpt(String s1, String s2, Object[] list)
 	{
@@ -130,10 +120,6 @@ public class GameDisplay extends JFrame implements ActionListener {
 	public void setOpt()
 	{
 		turnOpt = 0;
-	}
-	public void showMsg(String s1, String s2)
-	{
-		JOptionPane.showMessageDialog(null, s1, s2, JOptionPane.PLAIN_MESSAGE);
 	}
 	public void removeCounts()
 	{
@@ -186,9 +172,13 @@ public class GameDisplay extends JFrame implements ActionListener {
 		{
 			turnOpt = 4;
 		}
-		if(source.equals(upgrade))
+		if(source.equals(upgradeMoney))
 	  {
 			turnOpt = 5;
+		}
+		if(source.equals(upgradeCredits))
+	  {
+			turnOpt = 6;
 		}
 		if(source.equals(work))
 		{
