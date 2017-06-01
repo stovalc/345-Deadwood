@@ -11,6 +11,8 @@ public class Area {
 	private Scene roomScene;
 	private int[][] xyLocations;
 	private int[] size = {115, 205};
+	private int[][] moveTo;
+	private ArrayList<Integer> availLoc;
 
 	//Self-explanatory, constructors + getters/setters
 	public Area(String name, ArrayList<Role> roles, int shots, int[][] locs) {
@@ -19,6 +21,29 @@ public class Area {
 		shotsLeft = shots;
 		currentShots = shotsLeft;
 		xyLocations = locs;
+		availLoc = new ArrayList<Integer>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
+	}
+	public int removeLoc()
+	{
+		int temp = availLoc.get(0);
+		availLoc.remove(0);
+		return temp;
+	}
+	public void addLoc(int loc)
+	{
+		if(loc < 8)
+		{
+			availLoc.add(loc);
+			Collections.sort(availLoc);
+		}
+	}
+	public void setMove(int[][] opt)
+	{
+		moveTo = opt;
+	}
+	public int[][] getMove()
+	{
+		return moveTo;
 	}
 	public void setSize(int[] s)
 	{
@@ -67,6 +92,10 @@ public class Area {
 	public int getShots()
 	{
 		return shotsLeft;
+	}
+	public int shots()
+	{
+		return currentShots;
 	}
 	public ArrayList<Player> getPlayers()
 	{
