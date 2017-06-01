@@ -9,6 +9,8 @@ public class Player {
 	private String Name;
 	private int rCounter;
 	private String fileName;
+	private int offsetX;
+	private int offsetY;
 	private int turnPhase = 0;
 	private int[] xyLoc = {991 - 600, 248 - 450};
 
@@ -74,10 +76,67 @@ public class Player {
 				{
 					System.out.println();
 					Location.moveOff(this);
+					ArrayList<Player> listP = Location.getPlayers();
+					if(Location.getMove() != null)
+					{
+						for(int i = 0; i < listP.size(); i++)
+						{
+							Player pTemp = listP.get(i);
+							pTemp.setXY(Location.getMove()[i][0] -600 + 25, Location.getMove()[i][1] - 450 + 25);
+						}
+					}
+					else
+					{
+						for(int i = 0; i < listP.size(); i++)
+						{
+							Player pTemp = listP.get(i);
+							System.out.println(pTemp.getName());
+							if(i < 4)
+							{
+								pTemp.setOffsetX(40*i);
+								pTemp.setOffsetY(0);
+							}
+							else
+							{
+								pTemp.setOffsetX(40*(i-4));
+								pTemp.setOffsetY(115);
+							}
+						}
+					}
+
 					Location = newLocation;
 					Location.moveOn(this);
+					listP = Location.getPlayers();
+					if(Location.getMove() != null)
+					{
+						offsetX = 0;
+						offsetY = 0;
+						xyLoc[0] = Location.getMove()[listP.size()-1][0] -600 + 25;
+						xyLoc[1] = Location.getMove()[listP.size()-1][1] -450 + 25;
+					}
+					else
+					{
+						for(int i = 0; i < listP.size(); i++)
+						{
+							Player pTemp = listP.get(i);
+							System.out.println(pTemp.getName());
+							if(i < 4)
+							{
+								pTemp.setOffsetX(40*i);
+								pTemp.setOffsetY(0);
+							}
+							else
+							{
+								pTemp.setOffsetX(40*(i-4));
+								pTemp.setOffsetY(115);
+							}
+						}
+						this.setXY(Location.getXY()[0][0] - 600, Location.getXY()[0][1] - 450);
+					}
+					System.out.println("NEXT");
+					
 					turnPhase = 1;
-					this.setXY(Location.getXY()[0][0] - 600, Location.getXY()[0][1] - 450);
+					
 					System.out.println("Player " + Name + "'s location is " + Location.getName());
 					ArrayList<Area> adj = Location.getAdjacent();
 					System.out.println("This room is adjacent to");
@@ -101,6 +160,22 @@ public class Player {
 				}
 			}
 		}
+	}
+	public int getOffsetX()
+	{
+		return offsetX;
+	}
+	public void setOffsetX(int off)
+	{
+		offsetX = off;
+	}
+	public int getOffsetY()
+	{
+		return offsetY;
+	}
+	public void setOffsetY(int off)
+	{
+		offsetY = off;
 	}
 	public void changeDollars(int amt)
 	{
@@ -342,5 +417,8 @@ public class Player {
 	public void reset(Area a){
 		Location.moveOff(this);
 		Location = a;
+		Location.moveOn(this);
+		xyLoc[0] = a.getXY()[0][0] - 600;
+		xyLoc[1] = a.getXY()[0][1] - 450;
 	}
 }

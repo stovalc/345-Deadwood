@@ -21,7 +21,8 @@ public class GameDisplay extends JFrame implements ActionListener {
 		private JButton move;
 		private JButton act;
 		private JButton endTurn;
-
+		private ArrayList<ArrayList<JLabel>> shotCounts = new ArrayList<ArrayList<JLabel>>();
+		private ArrayList<String[]> diceNames;
 		private int turnOpt;
 		private ArrayList<JLabel> cards = new ArrayList<JLabel>();
 		private JButton work;
@@ -32,15 +33,20 @@ public class GameDisplay extends JFrame implements ActionListener {
 		private ArrayList<Player> pList;
 		private JButton rehearse;
 		private JLayeredPane background;
+		private int[] day = new int[2];
 	  private Dimension boardSize = new Dimension(1200, 900);
 	  private Dimension paneSize = new Dimension(1300, 1000);
 	  private JLabel[] playerInfo = {new JLabel("Player 1"), new JLabel("Player 2"), new JLabel("Player 3"), new JLabel("Player 4"), new JLabel("Player 5"), new JLabel("Player 6"), new JLabel("Player 7"), new JLabel("Player 8")};
-	  //JLabel dayNum = new JLabel("Day Number: " + DeadWood.day + "/4");
+	  private JLabel dayNum = new JLabel();
 	  private JLabel[] playerNames;
 
 
     public static int numPlayers;
-
+    public void setDay(int t, int max)
+    {
+    	day[0] = t;
+    	day[1] = max;
+    }
 	public GameDisplay() {
 		background = new JLayeredPane();
 		getContentPane().add(background);
@@ -53,7 +59,7 @@ public class GameDisplay extends JFrame implements ActionListener {
 		board.setBounds(0, 0, boardSize.width, boardSize.height);
 		JLabel backgroundImage = new JLabel(new ImageIcon("board.jpg"));
 		board.add(backgroundImage);
-
+		
 
 		//Adding turn based action buttons
 		JPanel buttons = new JPanel();
@@ -96,7 +102,7 @@ public class GameDisplay extends JFrame implements ActionListener {
 		data.setLayout(new GridLayout(9,1));
 		data.setPreferredSize(new Dimension(100, 900));
 		data.setBounds(boardSize.width, 0, 100, 900);
-		//data.add(dayNum); needs to be fixed
+		data.add(dayNum);
 		for (int i = 0; i < 8; i++){
 			data.add(playerInfo[i]);
 		}
@@ -114,6 +120,37 @@ public class GameDisplay extends JFrame implements ActionListener {
 	public void setOpt()
 	{
 		turnOpt = 0;
+	}
+	public void removeCounts()
+	{
+		while(shotCounts.size() > 0)
+		{
+			shotCounts.remove(0);
+		}
+	}
+	public void addCount(Scene s)
+	{
+		ArrayList<JLabel> shots = new ArrayList<JLabel>();
+		for(int i = 0; i < s.getLoc().shots(); i ++)
+		{
+			JLabel addS = new JLabel(new ImageIcon("shotcounter-1.png"));
+			addS.setBounds(0, 0, boardSize.width, boardSize.height);
+			addS.setLocation(s.getLoc().getXY()[i+1][0] - 600 + 24, s.getLoc().getXY()[i+1][1] -450 + 29);
+			shots.add(addS);
+
+			background.add(addS, JLayeredPane.MODAL_LAYER );
+		}
+		shotCounts.add(shots);
+	}
+	public void changeIcon(int i, int rank)
+	{
+		playerNames[i].setIcon(new ImageIcon(diceNames.get(i)[rank - 1]));
+	}
+	public void decCount(int s, int left)
+	{
+		JLabel shot = shotCounts.get(s).get(left - 1);
+		shotCounts.get(s).remove(shot);
+		shot.setLocation(-500, -500);
 	}
 	//Button event listener
 	public  void actionPerformed(ActionEvent e) {
@@ -150,28 +187,36 @@ public class GameDisplay extends JFrame implements ActionListener {
 	}
 public void removeCards()
 {
-	for(int i = 0; i < cards.size(); i++)
+	while(cards.size() > 0)
 	{
-		JLabel card = cards.get(i);
-		card.setEnabled(false);
-		cards.remove(card);
-		card.setLocation(-500, -500);
+		JLabel card = cards.get(0);
+		background.remove(card);
+		cards.remove(0);
 	}
+	
 }
 	//Initializes cards on the board
-	public void setCard(Scene s)
+	public void setCard(ArrayList<Scene> sList)
 	{
-		JLabel newS = new JLabel(new ImageIcon(s.getFile()));
+		for(int i = 0; i < sList.size(); i++)
+		{
+			Scene s = sList.get(i);
+		System.out.println(s.getXY()[0] +", " + s.getXY()[1]);
+		JLabel newS = new JLabel(new ImageIcon("back.png"));
 		newS.setBounds(0, 0, boardSize.width, boardSize.height);
-		newS.setLocation(s.getXY()[0] - 600 + 205/2, s.getXY()[1] - 450 + 115/2);
+		newS.setLocation(s.getXY()[0] - 600 + 205/2, s.getXY()[1] - 450 + 62);
 		background.add(newS, JLayeredPane.MODAL_LAYER );
 		cards.add(newS);
+		}
+	}
+	public void startShoot(int s, String file)
+	{
+		cards.get(s).setIcon(new ImageIcon(file));
 	}
 	public void removeCard(int i)
 	{
 		JLabel card = cards.get(i);
-		card.setEnabled(false);
-		cards.remove(card);
+
 		card.setLocation(-500, -500);
 	}
 		//Drop down options for number of players
@@ -185,8 +230,22 @@ public void removeCards()
 		public static int getNumOfPlayers(){
 			return numPlayers;
 		}
+		public void clearPlayers()
+		{
+			for(int i = 0; i < playerNames.length; i++)
+			{
+				background.remove(playerNames[i]);
+			}
+			for(int i = 0 ; i < playerInfo.length; i++)
+			{
+				data.remove(playerInfo[i]);
+				playerInfo[i] = new JLabel("Player " + (i+1));
+				data.add(playerInfo[i]);
+			}
+		}
 
 		public void playerIcons(ArrayList<Player> players){
+
 			pList = players;
 			numPlayers = players.size();
 
@@ -201,18 +260,15 @@ public void removeCards()
 			String[] redDice = {"r1.png", "r2.png", "r3.png", "r4.png", "r5.png", "r6.png"};
 			String[] violetDice = {"v1.png", "v2.png", "v3.png", "v4.png", "v5.png", "v6.png"};
 			String[] yellowDice = {"y1.png", "y2.png", "y3.png", "y4.png", "y5.png", "y6.png"};
-			ArrayList<String[]> diceNames = new ArrayList<>(Arrays.asList(blueDice, cyanDice, greenDice, orangeDice, pinkDice, redDice, violetDice, yellowDice));
+			diceNames = new ArrayList<String[]>(Arrays.asList(blueDice, cyanDice, greenDice, orangeDice, pinkDice, redDice, violetDice, yellowDice));
 			//Setup a dice for each player
 			for (int i = 0; i < numPlayers; i++){
-				playerPics[i] = new ImageIcon(diceNames.get(i)[0]);
+				playerPics[i] = new ImageIcon(diceNames.get(i)[players.get(i).getRank()-1]);
 				playerNames[i] = new JLabel(playerPics[i]);
-				//put icons on board
-				JLabel temp = null;
-				temp = playerNames[i];
-				temp.setBounds(0, 0, boardSize.width, boardSize.height);
-				temp.setLocation(991-600 + 194/2, 248 - 450 + 201/2);
+				playerNames[i].setBounds(0, 0, boardSize.width, boardSize.height);
+				//playerNames[i].setLocation(991-600 + 194/2, 248 - 450 + 201/2);
 
-				background.add(temp, JLayeredPane.DRAG_LAYER);
+				background.add(playerNames[i], JLayeredPane.DRAG_LAYER);
 				//needs work
 			}
 
@@ -221,28 +277,37 @@ public void removeCards()
 		{
 			playNum = t;
 		}
-
+		public void changeLayer(int pNum)
+		{
+			background.moveToBack(playerNames[pNum]);
+		}
 		public int displayData(ArrayList<Player> players, int playerNum){
 			playNum = playerNum;
 			pList = players;
-		  numPlayers = players.size();
-			//dayNum.setText("Day Number: " + Deadwood.day);
+			numPlayers = players.size();
+			dayNum.setText("Day " + day[0] + " / " + day[1]);
 			for (int i = 0; i < numPlayers; i++){
 				Player p = pList.get(i);
 				playerInfo[i].setVerticalTextPosition(JLabel.TOP);
 				playerInfo[i].setHorizontalTextPosition(JLabel.RIGHT);
 				String[] playerColors = {"Blue", "Cyan", "Green", "Orange", "Pink", "Red", "Violet", "Yellow"};
+				String[] colorCodes= {"#0000FF", "#00FFFF", "#008000", "#FFA500", "#FF69B4", "#FF0000", "#9400D3", "FFFF00"};
 				if (i == playerNum){
 					playerInfo[i].setText("<html>Player: " + (i + 1) + "<br>It's your turn!" +
-				"<br>Credits: " + players.get(i).getCredits() + "<br>Dollars: " + players.get(i).getDollars() + "<br>Rank: " + players.get(i).getRank() +"</html>");
+				"<br>Credits: " + players.get(i).getCredits() + "<br>Dollars: " + players.get(i).getDollars() + "<br>Rank: " + players.get(i).getRank() + "<br><font color = \"" + colorCodes[i] +"\">Color: " + playerColors[i] + "</font></html>");
 				} else {
-					playerInfo[i].setText("<html>Player: " + (i + 1) + "<br>Credits: " + players.get(i).getCredits() + "<br>Dollars: " + players.get(i).getDollars() + "<br>Rank: " + players.get(i).getRank()+"</html>");
+					playerInfo[i].setText("<html>Player: " + (i + 1) + "<br>Credits: " + players.get(i).getCredits() + "<br>Dollars: " + players.get(i).getDollars() + "<br>Rank: " + players.get(i).getRank() + "<br><font color = \"" + colorCodes[i] +"\">Color: " + playerColors[i] + "</font></html>");
 				}
-				playerNames[i].setLocation(p.getXY()[0], p.getXY()[1]);
+				playerNames[i].setLocation(p.getXY()[0] + p.getOffsetX(), p.getXY()[1] + p.getOffsetY());
 			}
 			return 0;
 		}
 
+		
+		public void displayWinner(Player p)
+		{
+			JOptionPane.showMessageDialog(null, p.getName() + ", with a score of " + p.getMoney(), "WINNER!", JOptionPane.PLAIN_MESSAGE);
+		}
 
 
 }
