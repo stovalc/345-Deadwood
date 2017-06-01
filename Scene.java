@@ -9,7 +9,7 @@ public class Scene {
 	private boolean isFlipped;
 	private int sceneNum;
 	private Area location;
-	private int[] xy;
+	private int[] xy = new int[2];
 
 	//Constructor for the scene object
 	public Scene(String n, int num, String deets, int budget, String fName)
@@ -35,7 +35,9 @@ public class Scene {
 			location = a;
 			if(a != null)
 			{
-				xy = a.getXY()[0];
+				System.out.println("not null");
+				xy[0] = a.getXY()[0][0];
+				xy[1] = a.getXY()[0][1];
 			}
 			else
 			{
@@ -76,6 +78,10 @@ public class Scene {
 		System.out.println();
 		isFlipped = true;
 	}
+	public boolean flipped()
+	{
+		return isFlipped;
+	}
 
 	//Budget of the movie
 	public int getDiff()
@@ -104,8 +110,6 @@ public class Scene {
 				System.out.println("Player " + p.getName() + "gets " + diceRolls.get(i) + " dollars");
 			}
 		}
-		xy[0] = 0;
-		xy[1] = 0;
 		location.setScene(null);
 		ArrayList<Player> pList = location.getPlayers();
 		location = null;
@@ -115,18 +119,19 @@ public class Scene {
 			Role r= pTemp.getRole();
 			if(r != null)
 			{
+				pTemp.changeCredits(r.getRank());
 				r.setPlayer(null);
+				System.out.println("Player " + pTemp.getName() + " gets " + r.getRank() + " credits");
 			}
 			else
 			{
-				pTemp.changeCredits(r.getRank());
-				System.out.println("Player " + pTemp.getName() + " gets " + r.getRank() + " credits");
+				
+				
 			}
 			pTemp.removeRole();
 			pTemp.resetCounter();
 		}
-		xy[0] = -500;
-		xy[1] = -500;
+
 
 	}
 	public int[] getXY()

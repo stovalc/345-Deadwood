@@ -14,6 +14,7 @@ public class DeadWood extends GameDisplay {
 	private static int maxDay = 4;
 	public static int playerNum;
 	public static int numPlayers;
+	private static int boardSize = 0;
 
 	//Controls basic game flow
 	public static void main(String[] args) throws InterruptedException
@@ -38,7 +39,6 @@ public class DeadWood extends GameDisplay {
 		backgroundBoard.setResizable(true);
 		backgroundBoard.setVisible(true);
 
-
 		boolean game = true;
 		startGame();
 		//backgroundBoard.displayData(playerList, playerNum);
@@ -49,7 +49,9 @@ public class DeadWood extends GameDisplay {
 			turn = 0;
 			while(day < maxDay)
 			{
-				while(board.size() > 1)
+				backgroundBoard.setDay(day + 1, maxDay);
+				resetDay();
+				while(boardSize > 1)
 				{
 					backgroundBoard.displayData(playerList, turn);
 
@@ -63,10 +65,9 @@ public class DeadWood extends GameDisplay {
 					System.out.println();
 
 				}
-				resetDay();
+
 			}
 			endGame();
-			System.out.println("Enter 0 if you wish to stop playing, else enter # of players for next game");
 
 			boolean exit = true;
 			//determine whether want to continue playing
@@ -94,6 +95,8 @@ public class DeadWood extends GameDisplay {
 		Area mST = new Area("Main Street", mRoles, 3, new int[][]{new int[]{969, 28}, new int[]{912, 23}, new int[]{858, 23}, new int[]{804,23}});
 
 		locations.add(mST);
+		int[][] options1 = {{775, 75}, {820, 75}, {865, 75}, {910, 75}, {775, 125}, {820, 125}, {865, 125}, {910, 125}};
+		mST.setMove(options1);
 
 		Role wRDress = new Role("Woman in Red Dress", "Well, I'll be!", 2, true, new int[]{877, 276});
 		Role rFarmer = new Role("Reluctant Farmer", "I ain't so sure about that!", 1, true, new int[]{877, 352});
@@ -103,6 +106,7 @@ public class DeadWood extends GameDisplay {
 		Area Saloon = new Area("Saloon", salRoles, 2, new int[][]{new int[]{632, 280}, new int[]{626, 216}, new int[]{679, 216}});
 
 		locations.add(Saloon);
+		Saloon.setMove(new int[][]{new int[]{725, 225}, new int[]{770, 225}, new int[]{815, 225}, new int[]{860, 225}, new int[]{905, 225}, new int[]{925, 280}, new int[]{925, 340}, new int[]{925, 400}});
 
 		Role mUHorse = new Role("Man Under Horse", "A little help here!", 3, true, new int[]{448, 525});
 		Role sLeg = new Role("Shot in Leg", "Ow! Me leg!", 1, true, new int[]{412, 608});
@@ -182,7 +186,7 @@ public class DeadWood extends GameDisplay {
 		locations.add(Jail);
 
 		Role mOver = new Role("Man in Overalls", "Looks like a storm's comin' in.", 1, true, new int[]{236, 276});
-		Role mKeach = new Role("Mister Keach", "Howdy, stranger.", 1, true, new int[]{236, 358});
+		Role mKeach = new Role("Mister Keach", "Howdy, stranger.", 3, true, new int[]{236, 358});
 		ArrayList<Role> gSRoles= new ArrayList<Role>();
 		gSRoles.add(mOver);
 		gSRoles.add(mKeach);
@@ -194,6 +198,8 @@ public class DeadWood extends GameDisplay {
 		Area Trailers = new Area("Trailers", null, 0, new int[][]{new int[]{991, 248}});
 		locations.add(Trailers);
 		Trailers.setSize(new int[]{194, 201});
+
+		Trailers.setMove(new int[][]{{990, 365},{990, 285}, {990, 240}, {1035, 240}, {1080, 240}, {1125, 240}, {1150, 285}, {1150, 330}});
 		Area cOffice = new Area("Casting Office", null, 0, new int[][]{new int[]{9, 459}});
 		locations.add(cOffice);
 		cOffice.setSize(new int[]{208, 209});
@@ -561,6 +567,7 @@ public class DeadWood extends GameDisplay {
 		Scene breakPonies = new Scene("Breakin’ in Trick Ponies", 19, "Uncle Stewart reveals what to do when all else fails.", 3, "39.png");
 		breakPonies.addRoles(manSword);
 		breakPonies.addRoles(fratPledge);
+		deck.add(breakPonies);
 
 		Role burnMan = new Role("Burning Man", "Make it stop!", 2, false, new int[]{threeLoc[0], 47});
 		Role cheeseVend = new Role("Cheese Vendor", "Opa!", 4, false, new int[]{threeLoc[1], 47});
@@ -631,12 +638,21 @@ public class DeadWood extends GameDisplay {
 		deck.add(Czechs);
 		Collections.shuffle(deck);
 
+		getPlayers(Trailers);
+
+	}
+	public static void getPlayers(Area Trailers)
+	{
 		backgroundBoard.numOfPlayers();
 		playerNum = backgroundBoard.getNumOfPlayers();
 
 			for(int i = 0; i < playerNum; i++)
 			{
 				Player p;
+				if(playerNum <= 3)
+				{
+					maxDay = 3;
+				}
 				if(playerNum >= 7)
 				{
 					p = new Player("Player " + (i + 1), Trailers, 2);
@@ -654,38 +670,33 @@ public class DeadWood extends GameDisplay {
 					p.changeCredits(4);
 				}
 				playerList.add(p);
+				p.setXY(start.getMove()[i][0] - 600, start.getMove()[i][1] - 450);
 			}
-			for(int i = 0; i < locations.size() -2; i++)
-			{
-				Area a = locations.get(i);
-				Scene temp;
-				temp = deck.get(0);
-				deck.remove(temp);
-				temp.setLoc(a);
-				a.setScene(temp);
-				board.add(temp);
-				backgroundBoard.setCard(temp);
-				//
-
-			}
-
+			backgroundBoard.setDay(1, maxDay);
 			backgroundBoard.playerIcons(playerList);
-			System.out.println("Game is initialized!");
 	}
-
 	//Determines winner/prepares for next game
 	public static void endGame()
 	{
-		System.out.println("Game over!");
-		for(int i = 0; i < discard.size(); i++)
+		backgroundBoard.showMsg("Game over!", "End of Game");
+		while(discard.size() > 0)
 		{
 			Scene temp;
-			temp = discard.get(i);
+			temp = discard.get(0);
 			temp.flip(false);
 			deck.add(temp);
-			discard.remove(i);
+			discard.remove(0);
 		}
-
+		while(board.size() > 0)
+		{
+			Scene temp;
+			temp = board.get(0);
+			temp.flip(false);
+			deck.add(temp);
+			board.remove(0);
+		}
+		boardSize = 0;
+		Collections.shuffle(deck);
 		int[] winner = new int[playerList.size()];
 		ArrayList<Player> win = new ArrayList<Player>();
 		int max = 0;
@@ -703,8 +714,9 @@ public class DeadWood extends GameDisplay {
 				win.add(p);
 				max = winner[i];
 			}
-			System.out.println(p.getName() + " ended the game with a score of: " + winner[i]);
+			//System.out.println(p.getName() + " ended the game with a score of: " + winner[i]);
 			//calculate score
+
 		}
 		System.out.println();
 		if(win.size() > 1)
@@ -718,32 +730,47 @@ public class DeadWood extends GameDisplay {
 		}
 		else
 		{
-			System.out.println(win.get(0).getName() + " won the game with a score of " + win.get(0).getMoney());
+			backgroundBoard.displayWinner(win.get(0));
 		}
+		while(playerList.size() > 0)
+		{
+			playerList.remove(0);
+		}
+		backgroundBoard.clearPlayers();
+		getPlayers(start);
 	}
 
 	//Replaces the cards left on board + places others, essentially resets day
 	public static void resetDay()
 	{
 		System.out.println("End of day");
-		for(int i = 0; i < board.size(); i++)
+		for(int i = 0; i < boardSize; i++)
 		{
 			Scene temp;
 			temp = board.get(i);
 			temp.flip(true);
+			if(temp.getLoc()!= null)
+			{
 			temp.getLoc().removeScene();
 			temp.setLoc(null);
+			}
 			discard.add(temp);
 			int rem;
-			rem = board.indexOf(temp);
-			board.remove(temp);
+
 
 		}
+		while(board.size() > 0)
+		{
+			board.remove(0);
+		}
+		boardSize = 0;
 		backgroundBoard.removeCards();
+		backgroundBoard.removeCounts();
 		for(int i = 0; i < playerList.size(); i ++)
 		{
 			Player p = playerList.get(i);
 			p.reset(start);
+			backgroundBoard.displayData(playerList, i);
 			Role r = p.getRole();
 			if(r != null)
 			{
@@ -754,21 +781,27 @@ public class DeadWood extends GameDisplay {
 		}
 		for(int i = 0; i < locations.size() -2; i++){
 			Area a = locations.get(i);
-			Scene disc = a.getScene();
-			if(disc != null)
-			{
-				a.removeScene();
-			}
 			a.resetShots();
 			Scene temp;
+			System.out.println(deck.size());
 			temp = deck.get(0);
 			deck.remove(temp);
 			temp.setLoc(a);
 			a.setScene(temp);
 			board.add(temp);
-			backgroundBoard.setCard(temp);
+
+			backgroundBoard.addCount(a.getScene());
+			boardSize++;
+			System.out.println(a.getName());
+			System.out.println(a.getScene().getName() + ", " + a.getScene().getXY()[0]+", "+ a.getScene().getXY()[1]);
+			System.out.println(a.getXY()[0][0] + ", " + a.getXY()[0][1]);
+
 		}
+
+		backgroundBoard.setCard(board);
 		day++;
+		backgroundBoard.showMsg("A new day has started", "New Day");
+
 	}
 
 	//turn logic goes here, i.e have player choose to move, rehearse, act, upgrade, or take role
@@ -794,10 +827,12 @@ public class DeadWood extends GameDisplay {
 			 	opt = backgroundBoard.getOpt();
 				Thread.sleep(3);
 			}
+			//end turn
 			if(opt == 4)
 			{
 				p.setPhase(3);
 			}
+			//move
 			if(opt == 1)
 			{
 				if(p.getPhase() == 0)
@@ -820,20 +855,28 @@ public class DeadWood extends GameDisplay {
 								place = i;
 							}
 						}
+						String oldArea = p.getLocation().getName();
 						p.move(a.get(place));
-						backgroundBoard.displayData(playerList, turn);
 						loc = p.getLocation();
+						backgroundBoard.changeLayer(playerList.indexOf(p));
+						backgroundBoard.displayData(playerList, turn);
+						backgroundBoard.setLastAction("<html>" + p.getName() + " moved from " + oldArea + " <br>to " + p.getLocation().getName() + "<html>");
 						s = loc.getScene();
 						p.setPhase(1);
-						if(s != null)
+
+						if(s != null && !s.flipped())
 						{
+							System.out.println(locations.indexOf(loc));
+							System.out.println(board.indexOf(s));
+							System.out.println(locations.get(locations.indexOf(loc)).getName());
 							s.startShoot();
+							backgroundBoard.startShoot(locations.indexOf(loc), s.getFile());
 						}
 					}
 				}
 				else
 				{
-					System.out.println("Player has already taken a vital turn action");
+					backgroundBoard.showMsg("Player has already taken a vital turn action", "Error");
 				}
 			}
 			//rehearse
@@ -842,11 +885,12 @@ public class DeadWood extends GameDisplay {
 				if(p.getPhase() == 2)
 				{
 					p.rehearse();
+					backgroundBoard.setLastAction("<html>" + p.getName() + " rehearsed on <br>" + p.getLocation().getName() + "<html>");
 					p.setPhase(3);
 				}
 				else
 				{
-					System.out.println("Player cannot rehearse while not working on role");
+					backgroundBoard.showMsg("Player cannot rehearse while not working on role", "Error");
 				}
 			}
 			//act
@@ -854,21 +898,28 @@ public class DeadWood extends GameDisplay {
 			{
 				if(p.getPhase() == 2)
 				{
+					int oldCredits = p.getCredits();
+					int oldDollars = p.getDollars();
+					int sLeft = loc.getShots();
+					int ind = board.indexOf(s);
+					backgroundBoard.decCount(ind, sLeft);
 					p.act(s);
 					if(loc.getShots() == 0)
 					{
-
+						boardSize--;
 						s.finalCut();
-						backgroundBoard.removeCard(board.indexOf(s));
-						board.remove(s);
-						discard.add(s);
-
+						backgroundBoard.removeCard(locations.indexOf(p.getLocation()));
+						backgroundBoard.showMsg("End of shoot", loc.getName());
 					}
 					p.setPhase(3);
+					int dollarDiff = p.getDollars() - oldDollars;
+					int creditDiff = p.getCredits() - oldCredits;
+					backgroundBoard.setLastAction("<html>" + p.getName() + " acted on <br>" + p.getLocation().getName() + "and received " + dollarDiff + " Dollars <br>" + " and " +
+					creditDiff + " Credits <html>");
 				}
 				else
 				{
-					System.out.println("Player cannot act while not working on role");
+					backgroundBoard.showMsg("Player cannot act while not working on role", "Error");
 				}
 			}
 			/*
@@ -903,47 +954,57 @@ public class DeadWood extends GameDisplay {
 			}
 			*/
 			//Give option to either take role or upgrade if applicable
-			if(opt == 5 || opt == 6)
+			//upgrade
+			if(opt == 5)
 			{
 				if(p.getLocation().getName().equals("Casting Office"))
 				{
+					int oldRank = p.getRank();
+					ArrayList<String> creditChoices = new ArrayList<>(Arrays.asList("Credits", "Dollars"));
+					String creditType = backgroundBoard.showOpt("Would you like to upgrade with credits or money?\n", "Credit Type", creditChoices.toArray(new Object[2]));
 					if(p.getRank() == 6)
 					{
-						System.out.println("Already at max rank");
+						backgroundBoard.showMsg("Already at max rank", "Error");
 					}
 					else
 					{
-						boolean type = false;
-						String s1 = "Credits";
-						String s2 = "Dollars";
 						ArrayList<String> ranks = new ArrayList<String>();
 						for(int i = p.getRank()+1; i <= 6; i++)
 						{
 							ranks.add(Integer.toString(i));
 						}
 						String pick;
-						boolean didUp;
-						if(opt == 6)
+						boolean didUp = false;
+						if(creditType == "Credits")
 						{
-							pick = backgroundBoard.showOpt("Ranks that can be upgraded to\n", s1, ranks.toArray(new Object[ranks.size()]));
+							pick = backgroundBoard.showOpt("Ranks that can be upgraded to\n", "Credits", ranks.toArray(new Object[ranks.size()]));
 							if(pick != null)
 							{
 								didUp = p.upgradeCredits(Integer.parseInt(pick));
 							}
 						}
-						else
+						else if(creditType == "Dollars")
 						{
-							pick =  backgroundBoard.showOpt("Ranks that can be upgraded to\n", s2, ranks.toArray(new Object[ranks.size()]));
+							pick =  backgroundBoard.showOpt("Ranks that can be upgraded to\n", "Dollars", ranks.toArray(new Object[ranks.size()]));
 							if(pick != null)
 							{
 								didUp = p.upgradeMoney(Integer.parseInt(pick));
 							}
 						}
+						if(didUp)
+						{
+							backgroundBoard.setLastAction("<html>" + p.getName() + " upgraded from rank " + oldRank + " <br>to " + p.getRank() + "<html>");
+							backgroundBoard.changeIcon(turn, p.getRank());
+						}
+						else
+						{
+								backgroundBoard.showMsg("Failed to upgrade", "Not enough of the credit type you chose");
+						}
 					}
 				}
 				else
 				{
-					System.out.println("Player not at casting office");
+					backgroundBoard.showMsg("Player not in Casting Office", "Error");
 				}
 			}
 			//work
@@ -954,7 +1015,7 @@ public class DeadWood extends GameDisplay {
 					loc = p.getLocation();
 					//display roles player can take, etc.
 					s = loc.getScene();
-					if(s != null || loc.getRoles() != null)
+					if(s != null)
 					{
 						ArrayList<Role> r1 = s.getRoles();
 						ArrayList<Role> r2 = loc.getRoles();
@@ -1005,6 +1066,10 @@ public class DeadWood extends GameDisplay {
 								}
 							}
 						}
+					}
+					else
+					{
+						backgroundBoard.showMsg("Can't work without a role", "Error");
 					}
 				}
 			}
