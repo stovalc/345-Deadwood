@@ -60,7 +60,7 @@ public class GameDisplay extends JFrame implements ActionListener {
 		board.setBounds(0, 0, boardSize.width, boardSize.height);
 		JLabel backgroundImage = new JLabel(new ImageIcon("board.jpg"));
 		board.add(backgroundImage);
-		
+
 
 		//Adding turn based action buttons
 		JPanel buttons = new JPanel();
@@ -112,12 +112,14 @@ public class GameDisplay extends JFrame implements ActionListener {
 		background.add(lastAction, JLayeredPane.DEFAULT_LAYER);
 		background.add(data, JLayeredPane.DEFAULT_LAYER);
 
-		
+
 	}
+	//displays the last action a player took
 	public void setLastAction(String s1)
 	{
 		lastA.setText("<html> Last Action: <br><html>" + s1);
 	}
+	//displays a drop down option menu that can be called from the controller class
 	public String showOpt(String s1, String s2, Object[] list)
 	{
 		return (String)JOptionPane.showInputDialog(null, s1, s2, JOptionPane.DEFAULT_OPTION, null, list, "0");
@@ -130,10 +132,12 @@ public class GameDisplay extends JFrame implements ActionListener {
 	{
 		turnOpt = 0;
 	}
+	//displays a popup message, can be called from controller class
 	public void showMsg(String s1, String s2)
 	{
 		JOptionPane.showMessageDialog(null, s1, s2, JOptionPane.PLAIN_MESSAGE);
 	}
+	//remove shot counters
 	public void removeCounts()
 	{
 		while(shotCounts.size() > 0)
@@ -141,6 +145,7 @@ public class GameDisplay extends JFrame implements ActionListener {
 			shotCounts.remove(0);
 		}
 	}
+	//add shot counters
 	public void addCount(Scene s)
 	{
 		ArrayList<JLabel> shots = new ArrayList<JLabel>();
@@ -155,15 +160,17 @@ public class GameDisplay extends JFrame implements ActionListener {
 		}
 		shotCounts.add(shots);
 	}
-	public void changeIcon(int i, int rank)
-	{
-		playerNames[i].setIcon(new ImageIcon(diceNames.get(i)[rank - 1]));
-	}
+	//decrement shot counters
 	public void decCount(int s, int left)
 	{
 		JLabel shot = shotCounts.get(s).get(left - 1);
 		shotCounts.get(s).remove(shot);
 		shot.setLocation(-500, -500);
+	}
+	//update the player icons when they upgrade
+	public void changeIcon(int i, int rank)
+	{
+		playerNames[i].setIcon(new ImageIcon(diceNames.get(i)[rank - 1]));
 	}
 	//Button event listener
 	public  void actionPerformed(ActionEvent e) {
@@ -194,16 +201,16 @@ public class GameDisplay extends JFrame implements ActionListener {
 			turnOpt = 7;
 		}
 	}
-public void removeCards()
-{
-	while(cards.size() > 0)
+	//removes all cards
+	public void removeCards()
 	{
+		while(cards.size() > 0)
+		{
 		JLabel card = cards.get(0);
 		background.remove(card);
 		cards.remove(0);
+		}
 	}
-	
-}
 	//Initializes cards on the board
 	public void setCard(ArrayList<Scene> sList)
 	{
@@ -218,10 +225,12 @@ public void removeCards()
 		cards.add(newS);
 		}
 	}
+	//updates the card icon when the shoot starts
 	public void startShoot(int s, String file)
 	{
 		cards.get(s).setIcon(new ImageIcon(file));
 	}
+	//removes card when shoot ends
 	public void removeCard(int i)
 	{
 		JLabel card = cards.get(i);
@@ -239,6 +248,7 @@ public void removeCards()
 		public static int getNumOfPlayers(){
 			return numPlayers;
 		}
+		//clears players off the board, used in updates
 		public void clearPlayers()
 		{
 			for(int i = 0; i < playerNames.length; i++)
@@ -252,7 +262,7 @@ public void removeCards()
 				data.add(playerInfo[i]);
 			}
 		}
-
+		//places the player icons on the board
 		public void playerIcons(ArrayList<Player> players){
 
 			pList = players;
@@ -275,10 +285,7 @@ public void removeCards()
 				playerPics[i] = new ImageIcon(diceNames.get(i)[players.get(i).getRank()-1]);
 				playerNames[i] = new JLabel(playerPics[i]);
 				playerNames[i].setBounds(0, 0, boardSize.width, boardSize.height);
-				//playerNames[i].setLocation(991-600 + 194/2, 248 - 450 + 201/2);
-
 				background.add(playerNames[i], JLayeredPane.DRAG_LAYER);
-				//needs work
 			}
 
 		}
@@ -286,10 +293,12 @@ public void removeCards()
 		{
 			playNum = t;
 		}
+		//changes the layer for player icons
 		public void changeLayer(int pNum)
 		{
 			background.moveToBack(playerNames[pNum]);
 		}
+		//displays player data in the side panel
 		public int displayData(ArrayList<Player> players, int playerNum){
 			playNum = playerNum;
 			pList = players;
@@ -312,7 +321,7 @@ public void removeCards()
 			return 0;
 		}
 
-		
+		//displays winner at the end of the game
 		public void displayWinner(Player p)
 		{
 			JOptionPane.showMessageDialog(null, p.getName() + ", with a score of " + p.getMoney(), "WINNER!", JOptionPane.PLAIN_MESSAGE);

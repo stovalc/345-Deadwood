@@ -79,35 +79,6 @@ public class Player {
 					Location.moveOff(this);
 					ArrayList<Player> listP = Location.getPlayers();
 					Location.addLoc(areaLoc);
-					/*
-					if(Location.getMove() != null)
-					{
-						for(int i = 0; i < listP.size(); i++)
-						{
-							Player pTemp = listP.get(i);
-							pTemp.setXY(Location.getMove()[i][0] -600 + 25, Location.getMove()[i][1] - 450 + 25);
-						}
-					}
-					else
-					{
-						for(int i = 0; i < listP.size(); i++)
-						{
-							Player pTemp = listP.get(i);
-							System.out.println(pTemp.getName());
-							if(i < 4)
-							{
-								pTemp.setOffsetX(40*i);
-								pTemp.setOffsetY(0);
-							}
-							else
-							{
-								pTemp.setOffsetX(40*(i-4));
-								pTemp.setOffsetY(115);
-							}
-						}
-					}
-					*/
-
 					Location = newLocation;
 					Location.moveOn(this);
 					listP = Location.getPlayers();
@@ -120,11 +91,11 @@ public class Player {
 						xyLoc[0] = Location.getMove()[index][0] -600 + 25;
 						xyLoc[1] = Location.getMove()[index][1] -450 + 25;
 					}
-					
+
 					System.out.println("NEXT");
-					
+
 					turnPhase = 1;
-					
+
 					System.out.println("Player " + Name + "'s location is " + Location.getName());
 					ArrayList<Area> adj = Location.getAdjacent();
 					System.out.println("This room is adjacent to");
@@ -243,7 +214,7 @@ public class Player {
 		{
 			System.out.println("Player cannot take this role, rank is too high");
 		}
-		
+
 		return playerRole;
 	}
 	public Role getRole()
@@ -414,7 +385,5 @@ public class Player {
 		Location.moveOff(this);
 		Location = a;
 		Location.moveOn(this);
-		//xyLoc[0] = a.getXY()[0][0] - 600;
-		//xyLoc[1] = a.getXY()[0][1] - 450;
 	}
 }

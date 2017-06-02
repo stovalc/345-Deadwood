@@ -14,7 +14,7 @@ public class Area {
 	private int[][] moveTo;
 	private ArrayList<Integer> availLoc;
 
-	//Self-explanatory, constructors + getters/setters
+	//constructor for areas
 	public Area(String name, ArrayList<Role> roles, int shots, int[][] locs) {
 		roomName = name;
 		roleList = roles;
@@ -23,12 +23,14 @@ public class Area {
 		xyLocations = locs;
 		availLoc = new ArrayList<Integer>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
 	}
+	//removes the location
 	public int removeLoc()
 	{
 		int temp = availLoc.get(0);
 		availLoc.remove(0);
 		return temp;
 	}
+	//adds a location
 	public void addLoc(int loc)
 	{
 		if(loc < 8)
