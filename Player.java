@@ -148,6 +148,10 @@ public class Player {
 	{
 		rCounter ++;
 	}
+	public int getRcounter()
+	{
+		return rCounter;
+	}
 	public void setLoc(int i)
 	{
 		areaLoc = i;

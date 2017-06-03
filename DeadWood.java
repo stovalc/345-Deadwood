@@ -876,10 +876,14 @@ public class DeadWood extends GameDisplay {
 			//rehearse
 			if(opt == 3)
 			{
-				if(p.getPhase() == 2)
+				if(p.getRcounter() == 6)
+				{
+					backgroundBoard.showMsg("Player cannot rehearse anymore than 6 times", "Error");
+				}
+				else if(p.getPhase() == 2)
 				{
 					p.rehearse();
-					backgroundBoard.setLastAction("<html>" + p.getName() + " rehearsed on <br>" + p.getLocation().getName() + "<html>");
+					backgroundBoard.setLastAction("<html>" + p.getName() + " rehearsed on <br>" + p.getLocation().getName() + "<br>for a total of " + p.getRcounter() + " rehearse counters added <html>");
 					p.setPhase(3);
 				}
 				else
